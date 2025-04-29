@@ -5,6 +5,7 @@ import Register from './pages/Register';
 import Journal from './pages/Journal';
 import ProtectedRoute from './components/ProtectedRoutes';  
 import Dashboard from './pages/Dashboard';
+import { Navigate } from 'react-router-dom';
 import Sidebar from './components/Sidebar';
 
 export default function App() {
