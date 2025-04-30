@@ -7,6 +7,7 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Data
 @NoArgsConstructor
@@ -32,11 +33,11 @@ public class Journal {
     @Column
     private double entryPrice;
     @Column
-    private LocalDateTime entryTime;
+    private LocalTime entryTime;
     @Column
     private double exitPrice;
     @Column
-    private LocalDateTime exitTime;
+    private LocalTime exitTime;
     @Column
     private double quantity;
     @Column
@@ -142,19 +143,19 @@ public class Journal {
         this.tradeType = tradeType;
     }
 
-    public LocalDateTime getExitTime() {
+    public LocalTime getExitTime() {
         return exitTime;
     }
 
-    public void setExitTime(LocalDateTime exitTime) {
+    public void setExitTime(LocalTime exitTime) {
         this.exitTime = exitTime;
     }
 
-    public LocalDateTime getEntryTime() {
+    public LocalTime getEntryTime() {
         return entryTime;
     }
 
-    public void setEntryTime(LocalDateTime entryTime) {
+    public void setEntryTime(LocalTime entryTime) {
         this.entryTime = entryTime;
     }
 

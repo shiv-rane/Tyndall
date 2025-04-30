@@ -22,7 +22,7 @@ export default function Login() {
       } else if (err.response?.status === 400) {
         setError(err.response?.data?.error || 'Password is incorrect');  
       } else {
-        setError('Login failed');
+        setError('Server under maintenance');
       }
     }
   };
