@@ -30,14 +30,15 @@ const Dashboard = () => {
 
         const [statsRes, equityRes, tradesRes, tipRes] = await Promise.all([
           axios.get("/api/user/stats", axiosConfig),
-          axios.get("/api/user/equity-curve", axiosConfig),
-          axios.get("/api/user/recent-trades", axiosConfig),
+          axios.get("/api/dashboard/equity-curve", axiosConfig),
+          axios.get("http://localhost:8080/api/dashboard/recent-trades", axiosConfig),
           axios.get("/api/user/suggestions", axiosConfig),
         ]);
+        console.log("Recent Trades Response", tradesRes.data);
 
         setStats(statsRes.data);
         setEquityData(equityRes.data);
-        setRecentTrades(tradesRes.data.trades || []);
+        setRecentTrades(tradesRes.data || []);
         setSmartTip(tipRes.data.tip || "");
       } catch (error) {
         console.error("Error fetching dashboard data", error);
@@ -135,22 +136,23 @@ const Dashboard = () => {
                   <th className="p-2">Entry</th>
                   <th className="p-2">Exit</th>
                   <th className="p-2">P&L</th>
-                  <th className="p-2">RRR</th>
+                  <th className="p-2">Note</th>
                 </tr>
               </thead>
               <tbody>
                 {Array.isArray(recentTrades) && recentTrades.length > 0 ? (
                   recentTrades.map((trade, idx) => (
                     <tr key={idx} className="border-b">
-                      <td className="p-2">{trade.date}</td>
-                      <td className="p-2">{trade.symbol}</td>
-                      <td className="p-2">{trade.side}</td>
-                      <td className="p-2">{trade.entry}</td>
-                      <td className="p-2">{trade.exit}</td>
+                      <td className="p-2">{trade.date || "N/A"}</td>
+                      <td className="p-2">{trade.symbol || "N/A"}</td>
+                      <td className="p-2">{trade.side || "N/A"}</td>
+                      <td className="p-2">{trade.entry ?? "-"}</td>
+                      <td className="p-2">{trade.exit ?? "-"}</td>
                       <td className={`p-2 ${trade.pnl >= 0 ? "text-green-600" : "text-red-600"}`}>
-                        ₹{trade.pnl}
+                        ₹{Number.isFinite(trade.pnl) ? trade.pnl : 0}
                       </td>
-                      <td className="p-2">{trade.rrr}</td>
+                      <td className="p-2">{trade.note || "-"}</td>
+
                     </tr>
                   ))
                 ) : (

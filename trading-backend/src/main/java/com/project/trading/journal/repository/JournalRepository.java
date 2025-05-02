@@ -32,4 +32,7 @@ public interface JournalRepository extends JpaRepository<Journal,Integer> {
     List<AnalyticsStrategyDTO> getStrategyAnalytics(String email);
 
     List<Journal> findAllByUserEmailOrderByDateAsc(String email);
+
+    List<Journal> findTop3ByUserEmailOrderByCreatedAtDesc(String email);
+
 }
