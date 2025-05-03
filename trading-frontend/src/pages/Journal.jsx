@@ -88,12 +88,6 @@ const Journal = () => {
       const token = tokenObject ? tokenObject.token : null;
   
       if (!token) return;
-
-      if (!editedTrade?.id) {
-        console.error('No trade ID found for update');
-        return;
-      }
-      console.log(editedTrade.id);
   
       const tradeId = Number(editedTrade.id);
       if (isNaN(tradeId)) {
@@ -101,7 +95,7 @@ const Journal = () => {
         return;
       }
 
-      await axios.put(`http://localhost:8080/api/journal/edit/${editingRow.id}`, editingRow, {
+      await axios.put(`http://localhost:8080/api/journal/edit/${editedTrade.id}`, editedTrade, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
   
