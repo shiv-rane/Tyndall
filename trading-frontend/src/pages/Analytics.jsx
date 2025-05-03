@@ -1,8 +1,20 @@
+// AnalyticsPage.jsx
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { BarChart, LineChart, Bar, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import {
+  BarChart,
+  LineChart,
+  Bar,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Cell,
+  ResponsiveContainer,
+} from 'recharts';
 
-// Mock data
+// Mock data (same as before)
 const kpiData = {
   netPnl: 12500,
   winRate: 68,
@@ -47,39 +59,69 @@ const streakData = {
   longestWin: 7,
   longestLoss: 4,
   currentStreak: 2,
-  currentType: 'win'
+  currentType: 'win',
 };
 
+// Sidebar component
 function Sidebar() {
   return (
-    <div className="w-64 bg-indigo-600 text-white fixed h-full p-6">
-      <h1 className="text-2xl font-bold mb-10 tracking-wide">TradeSaaS</h1>
-      <nav className="flex flex-col gap-2">
-        <Link to="/dashboard" className="p-3 rounded-lg hover:bg-indigo-500 hover:scale-[1.02] transition-all duration-200 font-medium tracking-wide">
-          Dashboard
-        </Link>
-        <Link to="/journal" className="p-3 rounded-lg hover:bg-indigo-500 hover:scale-[1.02] transition-all duration-200 font-medium tracking-wide">
-          Journal
-        </Link>
-        <Link to="/analytics" className="p-3 rounded-lg hover:bg-indigo-500 hover:scale-[1.02] transition-all duration-200 font-medium tracking-wide">
-          Analytics
-        </Link>
+    <aside className="w-64 bg-indigo-700 text-white fixed h-screen p-6">
+      <h1 className="text-2xl font-bold mb-10">TradeSaaS</h1>
+      <nav className="flex flex-col gap-4 text-base">
+        <Link to="/dashboard" className="hover:bg-indigo-600 p-3 rounded-lg transition-all">Dashboard</Link>
+        <Link to="/journal" className="hover:bg-indigo-600 p-3 rounded-lg transition-all">Journal</Link>
+        <Link to="/analytics" className="hover:bg-indigo-600 p-3 rounded-lg transition-all">Analytics</Link>
       </nav>
-      <div className="absolute bottom-0 left-0 right-0 p-6 border-t border-indigo-400">
+      <div className="absolute bottom-0 left-0 right-0 p-6 border-t border-indigo-500">
         <button
           onClick={() => {
             localStorage.removeItem('token');
             window.location.href = '/login';
           }}
-          className="w-full p-3 text-left rounded-lg hover:bg-indigo-400 bg-indigo-500 transition-colors font-medium tracking-wide"
+          className="w-full p-3 bg-indigo-600 hover:bg-indigo-500 rounded-lg"
         >
           Logout
         </button>
       </div>
+    </aside>
+  );
+}
+
+// KPI card
+function KPICard({ title, value }) {
+  return (
+    <div className="bg-white p-4 rounded-xl shadow-sm border-l-4 border-indigo-600">
+      <p className="text-sm text-gray-500">{title}</p>
+      <p className="text-2xl font-bold text-gray-800 mt-1">{typeof value === 'number' ? value.toLocaleString() : value}</p>
     </div>
   );
 }
 
+// Chart container
+function ChartCard({ title, children }) {
+  return (
+    <div className="bg-white p-4 rounded-xl shadow-sm">
+      <h3 className="text-lg font-semibold text-indigo-700 mb-2">{title}</h3>
+      {children}
+    </div>
+  );
+}
+
+// Select filter
+function SelectFilter({ label, options }) {
+  return (
+    <div className="flex flex-col gap-1">
+      <label className="text-sm text-gray-700 font-medium">{label}</label>
+      <select className="rounded-md border border-gray-300 px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-600">
+        {options.map(option => (
+          <option key={option.value} value={option.value}>{option.label}</option>
+        ))}
+      </select>
+    </div>
+  );
+}
+
+// Main component
 export default function AnalyticsPage() {
   const [filters, setFilters] = useState({
     dateRange: '30d',
@@ -87,137 +129,132 @@ export default function AnalyticsPage() {
     symbol: 'all',
   });
 
-  const getBarColor = (value) => value >= 0 ? '#16a34a' : '#dc2626';
+  const getBarColor = (value) => (value >= 0 ? '#22c55e' : '#ef4444');
 
   return (
     <div className="flex">
       <Sidebar />
-      
-      <div className="ml-64 p-6 w-full min-h-screen bg-gray-50">
+      <main className="ml-64 p-6 w-full min-h-screen bg-gray-50">
         {/* KPI Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-3 mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
           <KPICard title="Net PnL (₹)" value={kpiData.netPnl} />
           <KPICard title="Win Rate (%)" value={kpiData.winRate} />
           <KPICard title="Avg RRR" value={kpiData.avgRRR} />
-          <KPICard title="Max DD (%)" value={kpiData.maxDrawdown} />
+          <KPICard title="Max Drawdown (%)" value={kpiData.maxDrawdown} />
           <KPICard title="Total Trades" value={kpiData.totalTrades} />
         </div>
 
         {/* Charts */}
-        <div className="space-y-4">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            <ChartCard title="Equity Curve">
-              <ResponsiveContainer width="100%" height={250}>
-                <LineChart data={equityData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="date" stroke="#4f46e5" />
-                  <YAxis stroke="#4f46e5" />
-                  <Tooltip />
-                  <Line 
-                    type="monotone" 
-                    dataKey="value" 
-                    stroke="#4f46e5"
-                    strokeWidth={2}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
-            </ChartCard>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <ChartCard title="Equity Curve">
+            <ResponsiveContainer width="100%" height={250}>
+              <LineChart data={equityData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="date" />
+                <YAxis />
+                <Tooltip />
+                <Line type="monotone" dataKey="value" stroke="#6366f1" strokeWidth={2} />
+              </LineChart>
+            </ResponsiveContainer>
+          </ChartCard>
 
-            <ChartCard title="Monthly Performance">
-              <ResponsiveContainer width="100%" height={250}>
-                <BarChart data={monthlyData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="month" stroke="#4f46e5" />
-                  <YAxis stroke="#4f46e5" />
-                  <Tooltip />
-                  <Bar 
-                    dataKey="pnl"
-                    fill={({ pnl }) => getBarColor(pnl)}
-                  />
-                </BarChart>
-              </ResponsiveContainer>
-            </ChartCard>
-          </div>
+                <ChartCard title="Monthly Performance">
+        <ResponsiveContainer width="100%" height={240}>
+          <BarChart
+            data={monthlyData}
+            margin={{ top: 10, right: 20, left: 0, bottom: 0 }}
+            barGap={8}
+          >
+            <CartesianGrid strokeDasharray="2 4" vertical={false} />
+            <XAxis dataKey="month" tickLine={false} axisLine={false} />
+            <YAxis tickLine={false} axisLine={false} />
+            <Tooltip />
+            <Bar dataKey="pnl" barSize={30}>
+              {monthlyData.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={getBarColor(entry.pnl)} />
+              ))}
+            </Bar>
+          </BarChart>
+        </ResponsiveContainer>
+      </ChartCard>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            <ChartCard title="Strategy Performance">
-              <ResponsiveContainer width="100%" height={250}>
-                <BarChart data={strategyData}>
-                  <XAxis dataKey="strategy" stroke="#4f46e5" />
-                  <YAxis stroke="#4f46e5" />
-                  <Tooltip />
-                  <Bar 
-                    dataKey="pnl"
-                    fill={({ pnl }) => getBarColor(pnl)}
-                  />
-                </BarChart>
-              </ResponsiveContainer>
-            </ChartCard>
 
-            <ChartCard title="RRR Distribution">
-              <ResponsiveContainer width="100%" height={250}>
-                <BarChart data={rrrData}>
-                  <XAxis dataKey="range" stroke="#4f46e5" />
-                  <YAxis stroke="#4f46e5" />
-                  <Tooltip />
-                  <Bar 
-                    dataKey="trades" 
-                    fill="#4f46e5"
-                  />
-                </BarChart>
-              </ResponsiveContainer>
-            </ChartCard>
-          </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            <ChartCard title="Day of Week Performance">
-              <ResponsiveContainer width="100%" height={250}>
-                <BarChart data={dayData}>
-                  <XAxis dataKey="day" stroke="#4f46e5" />
-                  <YAxis stroke="#4f46e5" />
-                  <Tooltip />
-                  <Bar 
-                    dataKey="pnl"
-                    fill={({ pnl }) => getBarColor(pnl)}
-                  />
-                </BarChart>
-              </ResponsiveContainer>
-            </ChartCard>
+          <ChartCard title="Strategy Performance">
+          <ResponsiveContainer width="100%" height={250}>
+  <BarChart data={strategyData} barSize={28} barGap={4} categoryGap={10}>
+    <CartesianGrid strokeDasharray="2 4" vertical={false} />
+    <XAxis dataKey="strategy" tickLine={false} axisLine={false} />
+    <YAxis tickLine={false} axisLine={false} />
+    <Tooltip />
+    <Bar dataKey="pnl">
+      {strategyData.map((entry, index) => (
+        <Cell key={index} fill={getBarColor(entry.pnl)} />
+      ))}
+    </Bar>
+  </BarChart>
+</ResponsiveContainer>
+          </ChartCard>
 
-            <ChartCard title="Win/Loss Streaks">
-              <div className="p-4">
-                <table className="w-full">
-                  <tbody>
-                    <tr className="border-b">
-                      <td className="py-2 font-medium">Longest Win Streak</td>
-                      <td className="text-green-600">{streakData.longestWin} trades</td>
-                    </tr>
-                    <tr className="border-b">
-                      <td className="py-2 font-medium">Longest Loss Streak</td>
-                      <td className="text-red-600">{streakData.longestLoss} trades</td>
-                    </tr>
-                    <tr>
-                      <td className="py-2 font-medium">Current Streak</td>
-                      <td className={streakData.currentType === 'win' ? 'text-green-600' : 'text-red-600'}>
-                        {streakData.currentStreak} {streakData.currentType}
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
+          <ChartCard title="RRR Distribution">
+          <ResponsiveContainer width="100%" height={250}>
+  <BarChart data={rrrData} barSize={28} barGap={4} categoryGap={10}>
+    <CartesianGrid strokeDasharray="2 4" vertical={false} />
+    <XAxis dataKey="range" tickLine={false} axisLine={false} />
+    <YAxis tickLine={false} axisLine={false} />
+    <Tooltip />
+    <Bar dataKey="trades" fill="#4f46e5" />
+  </BarChart>
+</ResponsiveContainer>
+
+          </ChartCard>
+
+          <ChartCard title="Day of Week Performance">
+           <ResponsiveContainer width="100%" height={250}>
+  <BarChart data={dayData} barSize={28} barGap={4} categoryGap={10}>
+    <CartesianGrid strokeDasharray="2 4" vertical={false} />
+    <XAxis dataKey="day" tickLine={false} axisLine={false} />
+    <YAxis tickLine={false} axisLine={false} />
+    <Tooltip />
+    <Bar dataKey="pnl">
+      {dayData.map((entry, index) => (
+        <Cell key={index} fill={getBarColor(entry.pnl)} />
+      ))}
+    </Bar>
+  </BarChart>
+</ResponsiveContainer>
+
+          </ChartCard>
+
+          <ChartCard title="Win/Loss Streaks">
+            <div className="p-4 text-sm text-gray-800 space-y-2">
+              <div className="flex justify-between">
+                <span>Longest Win Streak:</span>
+                <span className="text-green-600">{streakData.longestWin} trades</span>
               </div>
-            </ChartCard>
-          </div>
+              <div className="flex justify-between">
+                <span>Longest Loss Streak:</span>
+                <span className="text-red-600">{streakData.longestLoss} trades</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Current Streak:</span>
+                <span className={streakData.currentType === 'win' ? 'text-green-600' : 'text-red-600'}>
+                  {streakData.currentStreak} {streakData.currentType}
+                </span>
+              </div>
+            </div>
+          </ChartCard>
         </div>
 
         {/* Filters */}
-        <div className="mt-4 p-3 bg-white rounded-lg shadow-sm">
-          <div className="flex flex-wrap gap-4">
-            <SelectFilter 
+        <div className="mt-8 bg-white p-4 rounded-xl shadow-sm">
+          <div className="flex flex-wrap gap-6">
+            <SelectFilter
               label="Date Range"
               options={[
-                { value: '7d', label: 'Last 7 days' },
-                { value: '30d', label: 'Last 30 days' },
-                { value: '90d', label: 'Last 90 days' },
+                { value: '7d', label: 'Last 7 Days' },
+                { value: '30d', label: 'Last 30 Days' },
+                { value: '90d', label: 'Last 90 Days' },
               ]}
             />
             <SelectFilter
@@ -230,42 +267,7 @@ export default function AnalyticsPage() {
             />
           </div>
         </div>
-      </div>
-    </div>
-  );
-}
-
-function KPICard({ title, value }) {
-  return (
-    <div className="bg-white p-3 rounded-lg shadow-sm border-l-4 border-indigo-600">
-      <h3 className="text-xs font-medium text-gray-500">{title}</h3>
-      <p className="text-xl font-semibold mt-1 text-gray-900">
-        {typeof value === 'number' ? value.toLocaleString() : value}
-      </p>
-    </div>
-  );
-}
-
-function ChartCard({ title, children }) {
-  return (
-    <div className="bg-white p-3 rounded-lg shadow-sm">
-      <h3 className="text-base font-semibold mb-2 text-indigo-600">{title}</h3>
-      {children}
-    </div>
-  );
-}
-
-function SelectFilter({ label, options }) {
-  return (
-    <div className="flex items-center gap-2">
-      <label className="text-sm text-gray-600">{label}</label>
-      <select className="rounded-md border border-gray-300 px-3 py-1 text-sm focus:ring-2 focus:ring-indigo-600 focus:border-indigo-600">
-        {options.map(option => (
-          <option key={option.value} value={option.value}>
-            {option.label}
-          </option>
-        ))}
-      </select>
+      </main>
     </div>
   );
 }

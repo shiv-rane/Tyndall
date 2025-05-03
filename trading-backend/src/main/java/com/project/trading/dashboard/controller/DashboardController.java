@@ -25,4 +25,7 @@ public class DashboardController {
         dashboardService.getRecentTrades();
         return ResponseEntity.ok(dashboardService.getRecentTrades());
     }
+
+//    @GetMapping("/summary")
+//    public ResponseEntity<>
 }

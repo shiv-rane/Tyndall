@@ -8,6 +8,21 @@ const Journal = () => {
   const [error, setError] = useState(null);
   const [showAddRow, setShowAddRow] = useState(false);
   const [editingRow, setEditingRow] = useState(null);
+  const [editedTrade, setEditedTrade] = useState({
+    date: '',
+    symbol: '',
+    tradeType: 'Buy',
+    optionType: 'CE',
+    entryPrice: '',
+    entryTime: '',
+    exitPrice: '',
+    exitTime: '',
+    quantity: '',
+    strategy: '',
+    pnl: '',
+    note: '',
+    id: null
+  });
   const [selectedNote, setSelectedNote] = useState(null);
 
   const [newTrade, setNewTrade] = useState({
@@ -48,6 +63,57 @@ const Journal = () => {
     }
     
     setNewTrade(updatedTrade);
+  };
+  
+  const handleEditChange = (field, value) => {
+    const updatedTrade = { ...editedTrade };
+    
+    // Convert numeric fields to numbers
+    const numericFields = ['entryPrice', 'exitPrice', 'quantity', 'pnl'];
+    updatedTrade[field] = numericFields.includes(field) 
+      ? parseFloat(value) || 0 
+      : value;
+  
+    // Recalculate P&L
+    if (['entryPrice', 'exitPrice', 'quantity', 'tradeType'].includes(field)) {
+      updatedTrade.pnl = calculatePNL(updatedTrade).toFixed(2);
+    }
+    
+    setEditedTrade(updatedTrade);
+  };
+  //edit trade
+  const handleSaveEdit = async () => {
+    try {
+      const tokenObject = JSON.parse(localStorage.getItem('token'));
+      const token = tokenObject ? tokenObject.token : null;
+  
+      if (!token) return;
+
+      if (!editedTrade?.id) {
+        console.error('No trade ID found for update');
+        return;
+      }
+      console.log(editedTrade.id);
+  
+      const tradeId = Number(editedTrade.id);
+      if (isNaN(tradeId)) {
+        console.error('Invalid ID format:', editedTrade.id);
+        return;
+      }
+
+      await axios.put(`http://localhost:8080/api/journal/edit/${editingRow.id}`, editingRow, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+  
+      const response = await axios.get('http://localhost:8080/api/journal/all', {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+  
+      setRecentTrades(response.data);
+      setEditingRow(null);
+    } catch (error) {
+      console.error("Error updating trade:", error);
+    }
   };
   
 
@@ -383,104 +449,241 @@ const Journal = () => {
                     </tr>
                   )}
                   {/* Existing Trades */}
-                  {Array.isArray(recentTrades) && recentTrades.length > 0 ? (
-                      recentTrades.map((trade, index) => (
-                        <tr key={index} className="hover:bg-gray-50 transition-colors">
-                          {/* Date */}
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                            {new Date(trade.date).toLocaleDateString()}
-                          </td>
-                          
-                          {/* Symbol */}
-                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                            {trade.symbol}
-                          </td>
-                          
-                          {/* Side (Trade Type) */}
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                              trade.tradeType.toLowerCase() === 'buy' 
-                                ? 'bg-green-100 text-green-800' 
-                                : 'bg-red-100 text-red-800'
-                            }`}>
-                              {trade.tradeType}
-                            </span>
-                          </td>
-                          
-                          {/* Option Type */}
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                            {trade.optionType}
-                          </td>
-                          
-                          {/* Entry Price */}
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                            ₹{trade.entryPrice}
-                          </td>
-                          
-                          {/* Entry Time */}
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                            {trade.entryTime || '-'}
-                          </td>
-                          
-                          {/* Exit Price */}
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                            ₹{trade.exitPrice}
-                          </td>
-                          
-                          {/* Exit Time */}
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                            {trade.exitTime || '-'}
-                          </td>
-                          
-                          {/* Quantity */}
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                            {trade.quantity || '-'}
-                          </td>
-                          
-                          {/* Strategy */}
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                            {trade.strategy || '-'}
-                          </td>
-                          
-                          {/* P&L */}
-                          <td className={`px-6 py-4 whitespace-nowrap text-sm font-medium ${
-                            // trade.pnl >= 0 ? 'text-green-600' : 'text-red-600'
-                            calculatePNL(trade) >= 0 ? 'text-green-600' : 'text-red-600'
-                          }`}>
-                            {/* ₹{trade.pnl?.toFixed(2) || '0.00'} */}
-                            ₹{calculatePNL(trade).toFixed(2)}
-                          </td>
-                          
-                          {/* Actions */}
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700 flex gap-2">
-                            <button 
-                              onClick={() => setEditingRow(index)}
-                              className="text-indigo-600 hover:text-indigo-900"
-                            >
-                              ✏️
-                            </button>
-                            <button
-                              onClick={() => handleDelete(trade.id)} disabled={!trade.id}
-                              className="text-red-600 hover:text-red-900"
-                            >
-                              🗑️
-                            </button>
-                            <button
-                              onClick={() => setSelectedNote(trade.notes || 'No notes available')}
-                              className="text-gray-600 hover:text-gray-900"
-                            >
-                              📝
-                            </button>
-                          </td>
-                        </tr>
-                      ))
-                    ) : (
-                      <tr>
-                        <td colSpan="12" className="px-6 py-8 text-center text-gray-500">
-                          No trades recorded yet
-                        </td>
-                      </tr>
-                    )}
+{Array.isArray(recentTrades) && recentTrades.length > 0 ? (
+  recentTrades.map((trade, index) => {
+    const isEditing = editingRow === index;
+    
+    return (
+      <tr key={index} className="hover:bg-gray-50 transition-colors">
+        {/* Date */}
+        <td className="px-6 py-4">
+          {isEditing ? (
+            <input
+              type="date"
+              value={editedTrade?.date || ''}
+              onChange={(e) => handleEditChange('date', e.target.value)}
+              className="w-full p-1 border rounded"
+            />
+          ) : (
+            new Date(trade.date).toLocaleDateString()
+          )}
+        </td>
+
+        {/* Symbol */}
+        <td className="px-6 py-4">
+          {isEditing ? (
+            <input
+              type="text"
+              value={editedTrade?.symbol || ''}
+              onChange={(e) => handleEditChange('symbol', e.target.value)}
+              className="w-full p-1 border rounded"
+            />
+          ) : (
+            trade.symbol
+          )}
+        </td>
+
+        {/* Trade Type */}
+        <td className="px-6 py-4">
+          {isEditing ? (
+            <select
+              value={editedTrade?.tradeType || 'Buy'}
+              onChange={(e) => handleEditChange('tradeType', e.target.value)}
+              className="w-full p-1 border rounded"
+            >
+              <option>Buy</option>
+              <option>Sell</option>
+            </select>
+          ) : (
+            <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+              trade.tradeType.toLowerCase() === 'buy' 
+                ? 'bg-green-100 text-green-800' 
+                : 'bg-red-100 text-red-800'
+            }`}>
+              {trade.tradeType}
+            </span>
+          )}
+        </td>
+
+        {/* Option Type */}
+        <td className="px-6 py-4">
+          {isEditing ? (
+            <select
+              value={editedTrade?.optionType || 'CE'}
+              onChange={(e) => handleEditChange('optionType', e.target.value)}
+              className="w-full p-1 border rounded"
+            >
+              <option>CE</option>
+              <option>PE</option>
+            </select>
+          ) : (
+            trade.optionType
+          )}
+        </td>
+
+        {/* Entry Price */}
+        <td className="px-6 py-4">
+          {isEditing ? (
+            <input
+              type="number"
+              value={editedTrade?.entryPrice || ''}
+              onChange={(e) => handleEditChange('entryPrice', e.target.value)}
+              className="w-full p-1 border rounded"
+            />
+          ) : (
+            `₹${trade.entryPrice}`
+          )}
+        </td>
+
+        {/* Entry Time */}
+        <td className="px-6 py-4">
+          {isEditing ? (
+            <input
+              type="time"
+              value={editedTrade?.entryTime || ''}
+              onChange={(e) => handleEditChange('entryTime', e.target.value)}
+              className="w-full p-1 border rounded"
+            />
+          ) : (
+            trade.entryTime || '-'
+          )}
+        </td>
+
+        {/* Exit Price */}
+        <td className="px-6 py-4">
+          {isEditing ? (
+            <input
+              type="number"
+              value={editedTrade?.exitPrice || ''}
+              onChange={(e) => handleEditChange('exitPrice', e.target.value)}
+              className="w-full p-1 border rounded"
+            />
+          ) : (
+            `₹${trade.exitPrice}`
+          )}
+        </td>
+
+        {/* Exit Time */}
+        <td className="px-6 py-4">
+          {isEditing ? (
+            <input
+              type="time"
+              value={editedTrade?.exitTime || ''}
+              onChange={(e) => handleEditChange('exitTime', e.target.value)}
+              className="w-full p-1 border rounded"
+            />
+          ) : (
+            trade.exitTime || '-'
+          )}
+        </td>
+
+        {/* Quantity */}
+        <td className="px-6 py-4">
+          {isEditing ? (
+            <input
+              type="number"
+              value={editedTrade?.quantity || ''}
+              onChange={(e) => handleEditChange('quantity', e.target.value)}
+              className="w-full p-1 border rounded"
+            />
+          ) : (
+            trade.quantity || '-'
+          )}
+        </td>
+
+        {/* Strategy */}
+        <td className="px-6 py-4">
+          {isEditing ? (
+            <input
+              type="text"
+              value={editedTrade?.strategy || ''}
+              onChange={(e) => handleEditChange('strategy', e.target.value)}
+              className="w-full p-1 border rounded"
+            />
+          ) : (
+            trade.strategy || '-'
+          )}
+        </td>
+
+        {/* P&L */}
+        <td className={`px-6 py-4 ${
+          isEditing ? '' : 'whitespace-nowrap text-sm font-medium'
+        } ${
+          calculatePNL(isEditing ? editedTrade : trade) >= 0 
+            ? 'text-green-600' 
+            : 'text-red-600'
+        }`}>
+          {isEditing ? (
+            <input
+              type="number"
+              value={editedTrade?.pnl || ''}
+              readOnly
+              className="w-full p-1 border rounded"
+            />
+          ) : (
+            `₹${calculatePNL(trade).toFixed(2)}`
+          )}
+        </td>
+
+        {/* Actions */}
+        <td className="px-6 py-4 flex gap-2">
+          {isEditing ? (
+            <>
+              <button
+                onClick={handleSaveEdit}
+                className="bg-green-600 text-white px-3 py-1 rounded"
+              >
+                Save
+              </button>
+              <button
+                onClick={() => {
+                  setEditingRow(null);
+                  setEditedTrade(null);
+                }}
+                className="bg-gray-600 text-white px-3 py-1 rounded"
+              >
+                Cancel
+              </button>
+            </>
+          ) : (
+            <>
+              <button 
+                onClick={() => {
+                  setEditingRow(index);
+                  // Clone the trade object properly
+                  setEditedTrade(JSON.parse(JSON.stringify(trade)));
+                }}
+                className="text-indigo-600 hover:text-indigo-900"
+              >
+                ✏️
+              </button>
+
+              <button
+                onClick={() => handleDelete(trade.id)} 
+                disabled={!trade.id}
+                className="text-red-600 hover:text-red-900"
+              >
+                🗑️
+              </button>
+              <button
+                onClick={() => setSelectedNote(trade.notes || 'No notes available')}
+                className="text-gray-600 hover:text-gray-900"
+              >
+                📝
+              </button>
+            </>
+          )}
+        </td>
+      </tr>
+    );
+  })
+) : (
+  <tr>
+    <td colSpan="12" className="px-6 py-8 text-center text-gray-500">
+      No trades recorded yet
+    </td>
+  </tr>
+)}
                 </tbody>
               </table>
             </div>

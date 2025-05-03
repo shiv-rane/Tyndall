@@ -23,28 +23,28 @@ public class DashboardService {
 
     @Autowired
     private UserRepository userRepository;
-
-    public DashboardSummaryDTO sendDashSum(DashboardSummaryDTO dashboardSummaryDTO){
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        List<Journal> trades = journalRepository.findAllByUserEmail(email);
-
-        if(trades.isEmpty()){
-            throw new EntityNotFoundException("No trade was found");
-        }
-
-        double totalPnl = trades.stream().mapToDouble(Journal::getPnl).sum();
-        int totalTrades = trades.size();
-        long wins = trades.stream().filter(t -> t.getPnl() > 0).count();
-        double winRate = totalTrades == 0 ? 0 : (wins * 100.0) / totalTrades;
-        double avgRR = trades.stream()
-                .filter(t -> t.getEntryPrice() != 0)
-                .mapToDouble(t -> Math.abs(t.getPnl() / (t.getEntryPrice() * t.getQuantity())))
-                .average().orElse(0);
-        double drawdown = 0;
-
-
-        return new DashboardSummaryDTO(totalPnl,winRate,totalTrades,avgRR,drawdown);
-    }
+//
+//    public DashboardSummaryDTO sendDashSum(DashboardSummaryDTO dashboardSummaryDTO){
+//        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+//        List<Journal> trades = journalRepository.findAllByUserEmail(email);
+//
+//        if(trades.isEmpty()){
+//            throw new EntityNotFoundException("No trade was found");
+//        }
+//
+//        double totalPnl = trades.stream().mapToDouble(Journal::getPnl).sum();
+//        int totalTrades = trades.size();
+//        long wins = trades.stream().filter(t -> t.getPnl() > 0).count();
+//        double winRate = totalTrades == 0 ? 0 : (wins * 100.0) / totalTrades;
+//        double avgRR = trades.stream()
+//                .filter(t -> t.getEntryPrice() != 0)
+//                .mapToDouble(t -> Math.abs(t.getPnl() / (t.getEntryPrice() * t.getQuantity())))
+//                .average().orElse(0);
+//        double drawdown = 0;
+//
+//
+//        return new DashboardSummaryDTO(totalPnl,winRate,totalTrades,avgRR,drawdown);
+//    }
 
     public List<RecentTradeDTO> getRecentTrades() {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();

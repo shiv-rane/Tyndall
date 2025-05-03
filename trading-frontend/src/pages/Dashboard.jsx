@@ -29,7 +29,7 @@ const Dashboard = () => {
         };
 
         const [statsRes, equityRes, tradesRes, tipRes] = await Promise.all([
-          axios.get("/api/user/stats", axiosConfig),
+          axios.get("http://localhost:8080/api/dashboard/summary", axiosConfig),
           axios.get("/api/dashboard/equity-curve", axiosConfig),
           axios.get("http://localhost:8080/api/dashboard/recent-trades", axiosConfig),
           axios.get("/api/user/suggestions", axiosConfig),
