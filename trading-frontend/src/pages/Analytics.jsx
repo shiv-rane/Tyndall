@@ -64,18 +64,70 @@ const streakData = {
 };
 
 const streakTrades = [
-  { date: '2024-03-15', pnl: 4200 },
-  { date: '2024-03-16', pnl: -3200 },
-  { date: '2024-03-17', pnl: 1500 },
-  { date: '2024-03-18', pnl: 2800 },
-  { date: '2024-04-01', pnl: -5000 },
-  { date: '2024-04-02', pnl: 1200 },
-  { date: '2024-04-05', pnl: 3500 },
-  { date: '2024-04-06', pnl: -1500 },
-  { date: '2024-04-07', pnl: -2200 },
-  { date: '2024-04-08', pnl: 4100 },
+  // Last 7 days
+  { date: new Date().toISOString().split('T')[0], pnl: 4200 }, // Today
+  { date: new Date(Date.now() - 86400000).toISOString().split('T')[0], pnl: -3200 }, // Yesterday
+  { date: new Date(Date.now() - 2 * 86400000).toISOString().split('T')[0], pnl: 1500 },
+  { date: new Date(Date.now() - 3 * 86400000).toISOString().split('T')[0], pnl: -2800 },
+  { date: new Date(Date.now() - 4 * 86400000).toISOString().split('T')[0], pnl: 0 }, // No trade
+  { date: new Date(Date.now() - 5 * 86400000).toISOString().split('T')[0], pnl: 4200 },
+  { date: new Date(Date.now() - 6 * 86400000).toISOString().split('T')[0], pnl: -1500 },
+
+  // Previous weeks (sample data)
+  { date: '2024-05-15', pnl: 3200 },
+  { date: '2024-05-14', pnl: -4200 },
+  { date: '2024-05-12', pnl: 1800 },
+  { date: '2024-05-10', pnl: -2500 },
+  { date: '2024-05-08', pnl: 5000 },
+  { date: '2024-05-05', pnl: -1200 },
+  { date: '2024-05-03', pnl: 3000 },
+  { date: '2024-05-01', pnl: -4000 },
+
+  // April 2024
+  { date: '2024-04-28', pnl: 2200 },
+  { date: '2024-04-25', pnl: -1800 },
+  { date: '2024-04-22', pnl: 3500 },
+  { date: '2024-04-20', pnl: -2900 },
+  { date: '2024-04-18', pnl: 4100 },
+  { date: '2024-04-15', pnl: -1500 },
+  { date: '2024-04-12', pnl: 2800 },
+  { date: '2024-04-10', pnl: -3200 },
+  { date: '2024-04-08', pnl: 1900 },
+  { date: '2024-04-05', pnl: -2100 },
+  { date: '2024-04-03', pnl: 3000 },
+  { date: '2024-04-01', pnl: -2500 },
+
+  // March 2024
+  { date: '2024-03-28', pnl: 4200 },
+  { date: '2024-03-25', pnl: -3800 },
+  { date: '2024-03-22', pnl: 1500 },
+  { date: '2024-03-20', pnl: -2900 },
+  { date: '2024-03-18', pnl: 3200 },
+  { date: '2024-03-15', pnl: -4100 },
+  { date: '2024-03-12', pnl: 2800 },
+  { date: '2024-03-10', pnl: -2200 },
+  { date: '2024-03-08', pnl: 3500 },
+  { date: '2024-03-05', pnl: -1900 },
+  { date: '2024-03-03', pnl: 4100 },
+  { date: '2024-03-01', pnl: -3100 },
 ];
 
+// Generate remaining days with random/no trades
+for (let i = 7; i < 90; i++) {
+  const date = new Date(Date.now() - i * 86400000).toISOString().split('T')[0];
+  const exists = streakTrades.some(trade => trade.date === date);
+  
+  if (!exists) {
+    streakTrades.push({
+      date,
+      pnl: Math.random() > 0.6 ? // 40% chance of no trade
+        (Math.random() > 0.5 ? 
+          Math.floor(Math.random() * 5000) : // Profit
+          -Math.floor(Math.random() * 4000)) : // Loss
+        null
+    });
+  }
+}
 
 
 
@@ -245,8 +297,8 @@ export default function AnalyticsPage() {
 
 
           <ChartCard title="Trading Activity Calendar">
-  <StreakTracker trades={streakTrades} />
-</ChartCard>
+          <StreakTracker trades={streakTrades} />
+          </ChartCard>
 
 
         </div>
