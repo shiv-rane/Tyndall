@@ -1,5 +1,6 @@
 package com.project.trading.dashboard.controller;
 
+import com.project.trading.dashboard.dto.DashboardSummaryDTO;
 import com.project.trading.dashboard.dto.RecentTradeDTO;
 import com.project.trading.dashboard.service.DashboardService;
 import com.project.trading.journal.model.Journal;
@@ -26,6 +27,8 @@ public class DashboardController {
         return ResponseEntity.ok(dashboardService.getRecentTrades());
     }
 
-//    @GetMapping("/summary")
-//    public ResponseEntity<>
+    @GetMapping("/summary")
+    public ResponseEntity<DashboardSummaryDTO> getDashSum(){
+        return ResponseEntity.ok(dashboardService.sendDashSum());
+    }
 }

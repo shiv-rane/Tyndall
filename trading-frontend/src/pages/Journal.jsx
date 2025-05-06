@@ -55,13 +55,20 @@ const Journal = () => {
   };
   
   const handleTradeChange = (field, value) => {
-    const updatedTrade = { ...newTrade, [field]: value };
+    const updatedTrade = { ...newTrade };
     
-    // Auto-calculate P&L when relevant fields change
+    // Special handling for numeric fields
+    if (['entryPrice', 'exitPrice', 'quantity', 'pnl'].includes(field)) {
+      updatedTrade[field] = value === '' ? '' : Number(value) || 0;
+    } else {
+      updatedTrade[field] = value;
+    }
+  
+    // P&L calculation
     if (['entryPrice', 'exitPrice', 'quantity', 'tradeType'].includes(field)) {
       updatedTrade.pnl = calculatePNL(updatedTrade).toFixed(2);
     }
-    
+  
     setNewTrade(updatedTrade);
   };
   
@@ -170,11 +177,12 @@ const Journal = () => {
           setLoading(false);
           return;
         }
-        
+
         const response = await axios.get('http://localhost:8080/api/journal/all', {
           headers: { 'Authorization': `Bearer ${token}` },
         });
         setRecentTrades(response.data);
+        console.log(response.data);
         setLoading(false);
       } catch (error) {
         setError('Error fetching trades. Please try again later.');
@@ -303,145 +311,144 @@ const Journal = () => {
                 <tbody className="divide-y divide-gray-200">
                   {/* Add Trade Row */}
                   {showAddRow && (
-                    <tr className="bg-blue-50">
-                      {/* Date */}
-                      <td className="px-6 py-4">
-                        <input
-                          type="date"
-                          value={newTrade.date}
-                          onChange={(e) => setNewTrade({...newTrade, date: e.target.value})}
-                          className="w-full p-1 border rounded"
-                        />
-                      </td>
-                      
-                      {/* Symbol */}
-                      <td className="px-6 py-4">
-                        <input
-                          type="text"
-                          value={newTrade.symbol}
-                          onChange={(e) => setNewTrade({...newTrade, symbol: e.target.value})}
-                          className="w-full p-1 border rounded"
-                          placeholder="Symbol"
-                        />
-                      </td>
-                      
-                      {/* Side (Trade Type) */}
-                      <td className="px-6 py-4">
-                        <select
-                          value={newTrade.tradeType}
-                          onChange={(e) => setNewTrade({...newTrade, tradeType: e.target.value})}
-                          className="w-full p-1 border rounded"
-                        >
-                          <option>Buy</option>
-                          <option>Sell</option>
-                        </select>
-                      </td>
-                      
-                      {/* Option Type */}
-                      <td className="px-6 py-4">
-                        <select
-                          value={newTrade.optionType}
-                          onChange={(e) => setNewTrade({...newTrade, optionType: e.target.value})}
-                          className="w-full p-1 border rounded"
-                        >
-                          <option>CE</option>
-                          <option>PE</option>
-                        </select>
-                      </td>
-                      
-                      {/* Entry Price */}
-                      <td className="px-6 py-4">
-                        <input
-                          type="number"
-                          value={newTrade.entryPrice}
-                          onChange={(e) => setNewTrade({...newTrade, entryPrice: e.target.value})}
-                          className="w-full p-1 border rounded"
-                          placeholder="Entry"
-                        />
-                      </td>
-                      
-                      {/* Entry Time */}
-                      <td className="px-6 py-4">
-                        <input
-                          type="time"
-                          value={newTrade.entryTime}
-                          onChange={(e) => setNewTrade({...newTrade, entryTime: e.target.value})}
-                          className="w-full p-1 border rounded"
-                        />
-                      </td>
-                      
-                      {/* Exit Price */}
-                      <td className="px-6 py-4">
-                        <input
-                          type="number"
-                          value={newTrade.exitPrice}
-                          onChange={(e) => setNewTrade({...newTrade, exitPrice: e.target.value})}
-                          className="w-full p-1 border rounded"
-                          placeholder="Exit"
-                        />
-                      </td>
-                      
-                      {/* Exit Time */}
-                      <td className="px-6 py-4">
-                        <input
-                          type="time"
-                          value={newTrade.exitTime}
-                          onChange={(e) => setNewTrade({...newTrade, exitTime: e.target.value})}
-                          className="w-full p-1 border rounded"
-                        />
-                      </td>
-                      
-                      {/* Quantity */}
-                      <td className="px-6 py-4">
-                        <input
-                          type="number"
-                          value={newTrade.quantity}
-                          onChange={(e) => setNewTrade({...newTrade, quantity: e.target.value})}
-                          className="w-full p-1 border rounded"
-                          placeholder="Qty"
-                        />
-                      </td>
-                      
-                      {/* Strategy */}
-                      <td className="px-6 py-4">
-                        <input
-                          type="text"
-                          value={newTrade.strategy}
-                          onChange={(e) => setNewTrade({...newTrade, strategy: e.target.value})}
-                          className="w-full p-1 border rounded"
-                          placeholder="Strategy"
-                        />
-                      </td>
-                      
-                      {/* P&L */}
-                      <td className="px-6 py-4">
-                        <input
-                          type="number"
-                          value={newTrade.pnl}
-                          // onChange={(e) => setNewTrade({...newTrade, pnl: e.target.value})}
-                          readOnly
-                          className="w-full p-1 border rounded"
-                          placeholder="P&L"
-                        />
-                      </td>
-                      
-                      {/* Actions */}
-                      <td className="px-6 py-4 flex gap-2">
-                        <button
-                          onClick={handleSaveTrade}
-                          className="bg-green-600 text-white px-3 py-1 rounded"
-                        >
-                          Save
-                        </button>
-                        <button 
-                          onClick={() => setShowAddRow(false)}
-                          className="bg-gray-600 text-white px-3 py-1 rounded"
-                        >
-                          Cancel
-                        </button>
-                      </td>
-                    </tr>
-                  )}
+  <tr className="bg-blue-50">
+    {/* Date */}
+    <td className="px-6 py-4">
+      <input
+        type="date"
+        value={newTrade.date}
+        onChange={(e) => handleTradeChange('date', e.target.value)}
+        className="w-full p-1 border rounded"
+      />
+    </td>
+    
+    {/* Symbol */}
+    <td className="px-6 py-4">
+      <input
+        type="text"
+        value={newTrade.symbol}
+        onChange={(e) => handleTradeChange('symbol', e.target.value)}
+        className="w-full p-1 border rounded"
+        placeholder="Symbol"
+      />
+    </td>
+    
+    {/* Side (Trade Type) */}
+    <td className="px-6 py-4">
+      <select
+        value={newTrade.tradeType}
+        onChange={(e) => handleTradeChange('tradeType', e.target.value)}
+        className="w-full p-1 border rounded"
+      >
+        <option>Buy</option>
+        <option>Sell</option>
+      </select>
+    </td>
+    
+    {/* Option Type */}
+    <td className="px-6 py-4">
+      <select
+        value={newTrade.optionType}
+        onChange={(e) => handleTradeChange('optionType', e.target.value)}
+        className="w-full p-1 border rounded"
+      >
+        <option>CE</option>
+        <option>PE</option>
+      </select>
+    </td>
+    
+    {/* Entry Price */}
+    <td className="px-6 py-4">
+      <input
+        type="number"
+        value={newTrade.entryPrice}
+        onChange={(e) => handleTradeChange('entryPrice', e.target.value)}
+        className="w-full p-1 border rounded"
+        placeholder="Entry"
+      />
+    </td>
+    
+    {/* Entry Time */}
+    <td className="px-6 py-4">
+      <input
+        type="time"
+        value={newTrade.entryTime}
+        onChange={(e) => handleTradeChange('entryTime', e.target.value)}
+        className="w-full p-1 border rounded"
+      />
+    </td>
+    
+    {/* Exit Price */}
+    <td className="px-6 py-4">
+      <input
+        type="number"
+        value={newTrade.exitPrice}
+        onChange={(e) => handleTradeChange('exitPrice', e.target.value)}
+        className="w-full p-1 border rounded"
+        placeholder="Exit"
+      />
+    </td>
+    
+    {/* Exit Time */}
+    <td className="px-6 py-4">
+      <input
+        type="time"
+        value={newTrade.exitTime}
+        onChange={(e) => handleTradeChange('exitTime', e.target.value)}
+        className="w-full p-1 border rounded"
+      />
+    </td>
+    
+    {/* Quantity */}
+    <td className="px-6 py-4">
+      <input
+        type="number"
+        value={newTrade.quantity}
+        onChange={(e) => handleTradeChange('quantity', e.target.value)}
+        className="w-full p-1 border rounded"
+        placeholder="Qty"
+      />
+    </td>
+    
+    {/* Strategy */}
+    <td className="px-6 py-4">
+      <input
+        type="text"
+        value={newTrade.strategy}
+        onChange={(e) => handleTradeChange('strategy', e.target.value)}
+        className="w-full p-1 border rounded"
+        placeholder="Strategy"
+      />
+    </td>
+    
+    {/* P&L */}
+    <td className={`px-6 py-4 ${newTrade.pnl >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+      <input
+        type="number"
+        value={newTrade.pnl || ''}
+        readOnly
+        className="w-full p-1 border rounded bg-gray-100"
+        placeholder="P&L"
+      />
+    </td>
+    
+    {/* Actions */}
+    <td className="px-6 py-4 flex gap-2">
+      <button
+        onClick={handleSaveTrade}
+        className="bg-green-600 text-white px-3 py-1 rounded"
+      >
+        Save
+      </button>
+      <button 
+        onClick={() => setShowAddRow(false)}
+        className="bg-gray-600 text-white px-3 py-1 rounded"
+      >
+        Cancel
+      </button>
+    </td>
+  </tr>
+)}
                   {/* Existing Trades */}
 {Array.isArray(recentTrades) && recentTrades.length > 0 ? (
   recentTrades.map((trade, index) => {

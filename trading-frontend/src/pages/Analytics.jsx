@@ -1,6 +1,7 @@
 // AnalyticsPage.jsx
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import StreakTracker from "../components/StreakTracker";
 import {
   BarChart,
   LineChart,
@@ -61,6 +62,22 @@ const streakData = {
   currentStreak: 2,
   currentType: 'win',
 };
+
+const streakTrades = [
+  { date: '2024-03-15', pnl: 4200 },
+  { date: '2024-03-16', pnl: -3200 },
+  { date: '2024-03-17', pnl: 1500 },
+  { date: '2024-03-18', pnl: 2800 },
+  { date: '2024-04-01', pnl: -5000 },
+  { date: '2024-04-02', pnl: 1200 },
+  { date: '2024-04-05', pnl: 3500 },
+  { date: '2024-04-06', pnl: -1500 },
+  { date: '2024-04-07', pnl: -2200 },
+  { date: '2024-04-08', pnl: 4100 },
+];
+
+
+
 
 // Sidebar component
 function Sidebar() {
@@ -226,24 +243,12 @@ export default function AnalyticsPage() {
 
           </ChartCard>
 
-          <ChartCard title="Win/Loss Streaks">
-            <div className="p-4 text-sm text-gray-800 space-y-2">
-              <div className="flex justify-between">
-                <span>Longest Win Streak:</span>
-                <span className="text-green-600">{streakData.longestWin} trades</span>
-              </div>
-              <div className="flex justify-between">
-                <span>Longest Loss Streak:</span>
-                <span className="text-red-600">{streakData.longestLoss} trades</span>
-              </div>
-              <div className="flex justify-between">
-                <span>Current Streak:</span>
-                <span className={streakData.currentType === 'win' ? 'text-green-600' : 'text-red-600'}>
-                  {streakData.currentStreak} {streakData.currentType}
-                </span>
-              </div>
-            </div>
-          </ChartCard>
+
+          <ChartCard title="Trading Activity Calendar">
+  <StreakTracker trades={streakTrades} />
+</ChartCard>
+
+
         </div>
 
         {/* Filters */}

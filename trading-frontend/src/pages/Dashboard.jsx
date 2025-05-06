@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate,Link } from "react-router-dom";
 import axios from "axios";
 
 const Dashboard = () => {
@@ -29,7 +29,7 @@ const Dashboard = () => {
         };
 
         const [statsRes, equityRes, tradesRes, tipRes] = await Promise.all([
-          axios.get("/api/dashboard/summary", axiosConfig),
+          axios.get("http://localhost:8080/api/dashboard/summary", axiosConfig),
           axios.get("/api/dashboard/equity-curve", axiosConfig),
           axios.get("http://localhost:8080/api/dashboard/recent-trades", axiosConfig),
           axios.get("/api/user/suggestions", axiosConfig),
@@ -58,31 +58,43 @@ const Dashboard = () => {
     <div className="flex min-h-screen bg-gray-100">
 
       {/* Sidebar */}
-        <div className="w-64 bg-indigo-600 text-white flex flex-col p-6">
-        <h1 className="text-2xl font-bold mb-10 tracking-wide">TradeSaaS</h1>
-        
-        <nav className="flex flex-col gap-2">
-            <a
-            href="/dashboard"
-            className="p-3 rounded-lg hover:bg-indigo-500 hover:scale-[1.02] transition-all duration-200 font-medium tracking-wide"
-            >
-            Dashboard
-            </a>
-            <a
-            href="/journal"
-            className="p-3 rounded-lg hover:bg-indigo-500 hover:scale-[1.02] transition-all duration-200 font-medium tracking-wide"
-            >
-            Journal
-            </a>
-            <a
-            href="/analytics"
-            className="p-3 rounded-lg hover:bg-indigo-500 hover:scale-[1.02] transition-all duration-200 font-medium tracking-wide"
-            >
-            Analytics
-            </a>
-        </nav>
-        
-        </div>
+      <div className="w-64 bg-indigo-600 text-white flex flex-col p-6 h-screen sticky top-0">
+  <h1 className="text-2xl font-bold mb-10 tracking-wide">TradeSaaS</h1>
+  
+  <nav className="flex flex-col gap-2">
+    <a
+      href="/dashboard"
+      className="p-3 rounded-lg hover:bg-indigo-500 hover:scale-[1.02] transition-all duration-200 font-medium tracking-wide"
+    >
+      Dashboard
+    </a>
+    <a
+      href="/journal"
+      className="p-3 rounded-lg hover:bg-indigo-500 hover:scale-[1.02] transition-all duration-200 font-medium tracking-wide"
+    >
+      Journal
+    </a>
+    <a
+      href="/analytics"
+      className="p-3 rounded-lg hover:bg-indigo-500 hover:scale-[1.02] transition-all duration-200 font-medium tracking-wide"
+    >
+      Analytics
+    </a>
+  </nav>
+
+  {/* Logout Button - positioned at absolute bottom */}
+  <div className="mt-auto">
+    <button
+      onClick={() => {
+        localStorage.removeItem('token');
+        window.location.href = '/login';
+      }}
+      className="w-full p-3 text-left rounded-lg hover:bg-indigo-400 bg-indigo-500 transition-colors font-medium tracking-wide"
+    >
+      Logout
+    </button>
+  </div>
+</div>
 
 
       {/* Main Content */}
@@ -92,25 +104,25 @@ const Dashboard = () => {
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-10">
           <div className="bg-white p-4 rounded-xl shadow text-center">
             <h2 className="text-gray-500 text-sm mb-2">Net PnL</h2>
-            <p className={`text-2xl font-bold ${stats.netPnl >= 0 ? "text-green-600" : "text-red-600"}`}>
-              ₹{stats.netPnl || 0}
+            <p className={`text-2xl font-bold ${stats.total_pnl >= 0 ? "text-green-600" : "text-red-600"}`}>
+              ₹{stats.total_pnl || 0}
             </p>
           </div>
           <div className="bg-white p-4 rounded-xl shadow text-center">
             <h2 className="text-gray-500 text-sm mb-2">Win Rate</h2>
-            <p className="text-2xl font-bold">{stats.winRate || 0}%</p>
+            <p className="text-2xl font-bold">{stats.winrate || 0}%</p>
           </div>
           <div className="bg-white p-4 rounded-xl shadow text-center">
             <h2 className="text-gray-500 text-sm mb-2">Avg RRR</h2>
-            <p className="text-2xl font-bold">{stats.avgRRR || 0}</p>
+            <p className="text-2xl font-bold">{stats.avg_rrr || 0}</p>
           </div>
           <div className="bg-white p-4 rounded-xl shadow text-center">
             <h2 className="text-gray-500 text-sm mb-2">Total Trades</h2>
-            <p className="text-2xl font-bold">{stats.totalTrades || 0}</p>
+            <p className="text-2xl font-bold">{stats.total_trade || 0}</p>
           </div>
           <div className="bg-white p-4 rounded-xl shadow text-center">
             <h2 className="text-gray-500 text-sm mb-2">Max Drawdown</h2>
-            <p className="text-2xl font-bold">{stats.maxDrawdown || 0}%</p>
+            <p className="text-2xl font-bold">{stats.max_drawdown || 0}%</p>
           </div>
         </div>
 
@@ -149,7 +161,7 @@ const Dashboard = () => {
                       <td className="p-2">{trade.entry ?? "-"}</td>
                       <td className="p-2">{trade.exit ?? "-"}</td>
                       <td className={`p-2 ${trade.pnl >= 0 ? "text-green-600" : "text-red-600"}`}>
-                        ₹{Number.isFinite(trade.pnl) ? trade.pnl : 0}
+                        ₹{Number.isFinite(trade.pnl) ? Math.round(trade.pnl) : 0}
                       </td>
                       <td className="p-2">{trade.note || "-"}</td>
 

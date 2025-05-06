@@ -38,6 +38,9 @@ public class JournalService {
             throw new SecurityException("You don't have permission to edit this");
         }
         existingJournal.setDate(updatedJournal.getDate());
+        existingJournal.setSymbol(updatedJournal.getSymbol());
+        existingJournal.setTradeType(updatedJournal.getTradeType());
+        existingJournal.setOptionType(updatedJournal.getOptionType());
         existingJournal.setEntryPrice(updatedJournal.getEntryPrice());
         existingJournal.setEntryTime(updatedJournal.getEntryTime());
         existingJournal.setExitPrice(updatedJournal.getExitPrice());
