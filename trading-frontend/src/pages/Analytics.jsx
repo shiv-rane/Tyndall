@@ -16,14 +16,6 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 
-// Mock data (same as before)
-// const kpiData = {
-//   netPnl: 12500,
-//   winRate: 68,
-//   avgRRR: 2.4,
-//   maxDrawdown: -15,
-//   totalTrades: 142,
-// };
 
 const equityData = [
   { date: '2024-01-01', value: 100000 },
@@ -146,7 +138,7 @@ function SelectFilter({ label, options }) {
 // Main component
 export default function AnalyticsPage() {
   const [kpiData, setKpiData] = useState(null);
-  const [heatChart, setHeatChart] = useState(null);
+  const [trades, setTrades] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [filters, setFilters] = useState({
@@ -183,7 +175,28 @@ export default function AnalyticsPage() {
     fetchData();
   }, []);
 
+
+
+  useEffect(() => {
+    const fetchTrades = async () => {
+      try {
+        const tokenObject = JSON.parse(localStorage.getItem('token'));
+        const token = tokenObject ? tokenObject.token : null;
+
+        const response = await axios.get('http://localhost:8080/api/v1/analytics/heatstreaks', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setTrades(response.data);
+      } catch (err) {
+        console.error('Error fetching trades:', err);
+      }
+    };
   
+    fetchTrades();
+  }, []);
+
 
   const getBarColor = (value) => (value >= 0 ? '#22c55e' : '#ef4444');
   const totalPnlColor = kpiData?.totalPnl >= 0 ? 'green' : 'red';
@@ -303,7 +316,7 @@ export default function AnalyticsPage() {
 
 
           <ChartCard title="Trading Activity Calendar">
-          <StreakTracker trades={streakTrades} />
+          <StreakTracker trades={trades} />
           </ChartCard>
 
 

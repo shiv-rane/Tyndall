@@ -39,7 +39,7 @@ public class AnalyticsController {
         return ResponseEntity.ok(analyticsService.getStreaks(email));
     }
 
-    @GetMapping("heatstreaks")
+    @GetMapping("/heatstreaks")
     public ResponseEntity<List<AnalyticsHeatChartStreak>> getHeatStreak(){
         return ResponseEntity.ok(analyticsService.getHeatStreak());
     }

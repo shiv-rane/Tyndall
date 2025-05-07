@@ -126,8 +126,8 @@ const StreakTracker = ({ trades }) => {
           {dateGrid.map((week, weekIndex) => (
             <div key={weekIndex} className="flex flex-col gap-1">
               {week.map((date) => {
-    const isFuture = new Date(date) > new Date();
-    const hasTrade = tradeMap.has(date);
+          const isFuture = new Date(date) > new Date();
+          const hasTrade = tradeMap.has(date);
     
             return (
             <div
@@ -150,22 +150,21 @@ const StreakTracker = ({ trades }) => {
       </div>
 
       {/* Cursor-locked tooltip */}
-
-{tooltip && (
-  <div
-    className="fixed bg-gray-800 text-white px-3 py-2 rounded text-xs shadow-lg z-50 pointer-events-none whitespace-nowrap"
-    style={{
-      left: `${tooltip.x}px`,
-      top: `${tooltip.y}px`,
-      transform: tooltip.x < 100 ? 'translateX(0)' : 'translateX(-50%)'
-    }}
-  >
-    {tooltip.content}
-    <div className="absolute -bottom-1 left-1/2 w-2 h-2 bg-gray-800 transform -translate-x-1/2 rotate-45" />
-  </div>
-)}
-    </div>
-  );
-};
+      {tooltip && (
+        <div
+          className="fixed bg-gray-800 text-white px-3 py-2 rounded text-xs shadow-lg z-50 pointer-events-none whitespace-nowrap"
+          style={{
+            left: `${tooltip.x}px`,
+            top: `${tooltip.y}px`,
+            transform: tooltip.x < 100 ? 'translateX(0)' : 'translateX(-50%)'
+          }}
+        >
+          {tooltip.content}
+          <div className="absolute -bottom-1 left-1/2 w-2 h-2 bg-gray-800 transform -translate-x-1/2 rotate-45" />
+        </div>
+      )}
+          </div>
+        );
+      };
 
 export default StreakTracker;
