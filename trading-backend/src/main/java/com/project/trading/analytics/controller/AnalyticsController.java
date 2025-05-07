@@ -1,5 +1,6 @@
 package com.project.trading.analytics.controller;
 
+import com.project.trading.analytics.dto.AnalyticsHeatChartStreak;
 import com.project.trading.analytics.dto.AnalyticsStrategyDTO;
 import com.project.trading.analytics.dto.AnalyticsStreaksDTO;
 import com.project.trading.analytics.dto.AnalyticsSummaryDTO;
@@ -36,5 +37,10 @@ public class AnalyticsController {
     public ResponseEntity<AnalyticsStreaksDTO> getStreaks(){
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         return ResponseEntity.ok(analyticsService.getStreaks(email));
+    }
+
+    @GetMapping("heatstreaks")
+    public ResponseEntity<List<AnalyticsHeatChartStreak>> getHeatStreak(){
+        return ResponseEntity.ok(analyticsService.getHeatStreak());
     }
 }

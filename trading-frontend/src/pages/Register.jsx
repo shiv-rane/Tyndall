@@ -38,7 +38,7 @@ export default function Register() {
       <div className="hidden lg:block w-1/2 bg-indigo-600 text-white p-12">
         <div className="max-w-md mx-auto h-full flex flex-col justify-center">
           <h1 className="text-5xl font-bold mb-4">Markets, illuminated</h1>
-          <p className="text-2xl">LuxAlgo</p>
+          <p className="text-2xl">TradeSaaS</p>
         </div>
       </div>
 

@@ -1,5 +1,6 @@
 // AnalyticsPage.jsx
-import { useState } from 'react';
+import axios from 'axios';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import StreakTracker from "../components/StreakTracker";
 import {
@@ -16,13 +17,13 @@ import {
 } from 'recharts';
 
 // Mock data (same as before)
-const kpiData = {
-  netPnl: 12500,
-  winRate: 68,
-  avgRRR: 2.4,
-  maxDrawdown: -15,
-  totalTrades: 142,
-};
+// const kpiData = {
+//   netPnl: 12500,
+//   winRate: 68,
+//   avgRRR: 2.4,
+//   maxDrawdown: -15,
+//   totalTrades: 142,
+// };
 
 const equityData = [
   { date: '2024-01-01', value: 100000 },
@@ -105,14 +106,17 @@ function Sidebar() {
 }
 
 // KPI card
-function KPICard({ title, value }) {
+function KPICard({ title, value, valueClassName = '' }) {
   return (
     <div className="bg-white p-4 rounded-xl shadow-sm border-l-4 border-indigo-600">
       <p className="text-sm text-gray-500">{title}</p>
-      <p className="text-2xl font-bold text-gray-800 mt-1">{typeof value === 'number' ? value.toLocaleString() : value}</p>
+      <p className={`text-2xl font-bold mt-1 ${valueClassName}`}>
+        {typeof value === 'number' ? value.toLocaleString() : value}
+      </p>
     </div>
   );
 }
+
 
 // Chart container
 function ChartCard({ title, children }) {
@@ -138,15 +142,51 @@ function SelectFilter({ label, options }) {
   );
 }
 
+
 // Main component
 export default function AnalyticsPage() {
+  const [kpiData, setKpiData] = useState(null);
+  const [heatChart, setHeatChart] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [filters, setFilters] = useState({
     dateRange: '30d',
     strategy: 'all',
     symbol: 'all',
   });
 
+
+  //fetch summary data
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+
+        const tokenObject = JSON.parse(localStorage.getItem('token'));
+        const token = tokenObject ? tokenObject.token : null;
+
+        if (!token) {
+          setError('No authentication token found');
+          setLoading(false);
+          return;
+        }
+
+       const response = await axios.get('http://localhost:8080/api/v1/analytics/summary', {
+                 headers: { 'Authorization': `Bearer ${token}` },
+               });
+               setKpiData(response.data);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
+
+  
+
   const getBarColor = (value) => (value >= 0 ? '#22c55e' : '#ef4444');
+  const totalPnlColor = kpiData?.totalPnl >= 0 ? 'green' : 'red';
 
   return (
     <div className="flex">
@@ -154,12 +194,30 @@ export default function AnalyticsPage() {
       <main className="ml-64 p-6 w-full min-h-screen bg-gray-50">
         {/* KPI Cards */}
         <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
-          <KPICard title="Net PnL (₹)" value={kpiData.netPnl} />
-          <KPICard title="Win Rate (%)" value={kpiData.winRate} />
-          <KPICard title="Avg RRR" value={kpiData.avgRRR} />
-          <KPICard title="Max Drawdown (%)" value={kpiData.maxDrawdown} />
-          <KPICard title="Total Trades" value={kpiData.totalTrades} />
+          <KPICard
+            title="Net PnL (₹)"
+            value={kpiData?.totalPnl || 0} // Fallback to 0 if null
+            valueClassName={kpiData?.totalPnl >= 0 ? 'text-green-600' : 'text-red-600'}
+          />
+          <KPICard 
+            title="Win Rate (%)" 
+            value={kpiData?.winRate ?? '--'} // Nullish coalescing
+          />
+          <KPICard 
+            title="Avg RRR" 
+            value={kpiData?.avgRiskReward ?? '-'} 
+          />
+          <KPICard 
+            title="Max Drawdown (%)" 
+            value={kpiData?.maxDrawdown ?? 'N/A'} 
+          />
+          <KPICard 
+            title="Total Trades" 
+            value={kpiData?.totalTrades ?? 0} 
+          />
         </div>
+
+
 
         {/* Charts */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

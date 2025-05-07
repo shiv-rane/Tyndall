@@ -34,7 +34,6 @@ const Dashboard = () => {
           axios.get("http://localhost:8080/api/dashboard/recent-trades", axiosConfig),
           axios.get("/api/user/suggestions", axiosConfig),
         ]);
-        console.log("Recent Trades Response", tradesRes.data);
 
         setStats(statsRes.data);
         setEquityData(equityRes.data);
