@@ -1,9 +1,6 @@
 package com.project.trading.analytics.controller;
 
-import com.project.trading.analytics.dto.AnalyticsHeatChartStreak;
-import com.project.trading.analytics.dto.AnalyticsStrategyDTO;
-import com.project.trading.analytics.dto.AnalyticsStreaksDTO;
-import com.project.trading.analytics.dto.AnalyticsSummaryDTO;
+import com.project.trading.analytics.dto.*;
 import com.project.trading.analytics.service.AnalyticsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -42,5 +39,15 @@ public class AnalyticsController {
     @GetMapping("/heatstreaks")
     public ResponseEntity<List<AnalyticsHeatChartStreak>> getHeatStreak(){
         return ResponseEntity.ok(analyticsService.getHeatStreak());
+    }
+
+    @GetMapping("/weekly-performance")
+    public ResponseEntity<List<WeeklyPerformanceDTO>> getWeeklyPerformance(){
+        return ResponseEntity.ok(analyticsService.getWeeklyPerformance());
+    }
+
+    @GetMapping("/monthly-performance")
+    public ResponseEntity<List<MonthlyPerformanceDTO>> getMonthlyPerformance(){
+        return ResponseEntity.ok(analyticsService.getMonthlyPerformance());
     }
 }

@@ -1,9 +1,6 @@
 package com.project.trading.analytics.service;
 
-import com.project.trading.analytics.dto.AnalyticsHeatChartStreak;
-import com.project.trading.analytics.dto.AnalyticsStrategyDTO;
-import com.project.trading.analytics.dto.AnalyticsStreaksDTO;
-import com.project.trading.analytics.dto.AnalyticsSummaryDTO;
+import com.project.trading.analytics.dto.*;
 import com.project.trading.journal.model.Journal;
 import com.project.trading.journal.repository.JournalRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -12,9 +9,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.io.Serializable;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -89,6 +86,51 @@ public class AnalyticsService {
 
 
         return  list;
+    }
+
+    public List<WeeklyPerformanceDTO> getWeeklyPerformance(){
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        List<Journal> trades = journalRepository.findAllByUserEmail(email);
+
+        Map<LocalDate, Double> weeklyPnL = trades.stream()
+                .collect(Collectors.groupingBy(
+                        trade -> trade.getDate().with(DayOfWeek.MONDAY), // group by weekStart
+                        Collectors.summingDouble(Journal::getPnl)           // sum PnL for the week
+                ));
+        return  weeklyPnL.entrySet().stream()
+                .map(entry -> new WeeklyPerformanceDTO(entry.getKey(), entry.getValue()))
+                .sorted(Comparator.comparing(WeeklyPerformanceDTO::getWeekStart)) // optional: sort by week
+                .collect(Collectors.toList());
+    }
+
+
+    public List<MonthlyPerformanceDTO> getMonthlyPerformance() {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        List<Journal> trades = journalRepository.findAllByUserEmail(email);
+
+        // Use a Map to group by "YYYY-MM"
+        Map<String, Double> monthlyPnLMap = new HashMap<>();
+
+        for (Journal trade : trades) {
+            String journalDate = String.valueOf(trade.getDate()); // format: YYYY/MM/DD
+            String monthKey = journalDate.substring(0, 7).replace("/", "-"); // "YYYY-MM"
+
+            monthlyPnLMap.put(
+                    monthKey,
+                    monthlyPnLMap.getOrDefault(monthKey, 0.0) + trade.getPnl()
+            );
+        }
+
+        // Convert map entries to DTO list
+        List<MonthlyPerformanceDTO> result = new ArrayList<>();
+        for (Map.Entry<String, Double> entry : monthlyPnLMap.entrySet()) {
+            result.add(new MonthlyPerformanceDTO(entry.getKey(), Math.round(entry.getValue())));
+        }
+
+        // Optional: sort by date
+        result.sort(Comparator.comparing(MonthlyPerformanceDTO::getMonth));
+
+        return result;
     }
 
 }

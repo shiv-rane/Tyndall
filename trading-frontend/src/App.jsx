@@ -8,10 +8,12 @@ import Dashboard from './pages/Dashboard';
 import Analytics from './pages/Analytics';
 import { Navigate } from 'react-router-dom';
 import Sidebar from './components/Sidebar';
+import TokenWatcher from './components/TokenWatcher';
 
 export default function App() {
   return (
     <Router>
+       <TokenWatcher />
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
