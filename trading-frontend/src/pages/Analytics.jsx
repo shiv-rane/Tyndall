@@ -52,12 +52,12 @@ const formatWeek = (startDateStr) => {
 // Sidebar component
 function Sidebar() {
   return (
-    <aside className="w-64 bg-indigo-700 text-white fixed h-screen p-6">
-      <h1 className="text-2xl font-bold mb-10">TradeSaaS</h1>
-      <nav className="flex flex-col gap-4 text-base">
-        <Link to="/dashboard" className="hover:bg-indigo-600 p-3 rounded-lg transition-all">Dashboard</Link>
-        <Link to="/journal" className="hover:bg-indigo-600 p-3 rounded-lg transition-all">Journal</Link>
-        <Link to="/analytics" className="hover:bg-indigo-600 p-3 rounded-lg transition-all">Analytics</Link>
+    <aside className="w-64 bg-indigo-600 text-white fixed h-screen p-6">
+      <h1 className="text-2xl font-bold mb-10 tracking-wide">TradeSaaS</h1>
+      <nav className="flex flex-col gap-2">
+        <Link to="/dashboard" className="p-3 rounded-lg hover:bg-indigo-500 hover:scale-[1.02] transition-all duration-200 font-medium tracking-wide">Dashboard</Link>
+        <Link to="/journal" className="p-3 rounded-lg hover:bg-indigo-500 hover:scale-[1.02] transition-all duration-200 font-medium tracking-wide">Journal</Link>
+        <Link to="/analytics" className="p-3 rounded-lg hover:bg-indigo-500 hover:scale-[1.02] transition-all duration-200 font-medium tracking-wide">Analytics</Link>
       </nav>
       <div className="absolute bottom-0 left-0 right-0 p-6 border-t border-indigo-500">
         <button
@@ -65,7 +65,7 @@ function Sidebar() {
             localStorage.removeItem('token');
             window.location.href = '/login';
           }}
-          className="w-full p-3 bg-indigo-600 hover:bg-indigo-500 rounded-lg"
+          className="w-full p-3 text-left rounded-lg hover:bg-indigo-400 bg-indigo-500 transition-colors font-medium tracking-wide"
         >
           Logout
         </button>
