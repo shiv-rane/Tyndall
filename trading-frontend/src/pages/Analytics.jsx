@@ -27,17 +27,17 @@ const equityData = [
 ];
 
 
-const strategyData = [
-  { strategy: 'Breakout', pnl: 7500 },
-  { strategy: 'Reversal', pnl: -3200 },
-  { strategy: 'Scalping', pnl: 4400 },
-];
+// const strategyData = [
+//   { strategy: 'Breakout', pnl: 7500 },
+//   { strategy: 'Reversal', pnl: -3200 },
+//   { strategy: 'Scalping', pnl: 4400 },
+// ];
 
-const rrrData = [
-  { range: '0-1.0', trades: 15 },
-  { range: '1.0-2.0', trades: 30 },
-  { range: '2.0-3.0', trades: 12 },
-];
+// const rrrData = [
+//   { range: '0-1.0', trades: 15 },
+//   { range: '1.0-2.0', trades: 30 },
+//   { range: '2.0-3.0', trades: 12 },
+// ];
 
 const formatWeek = (startDateStr) => {
   const start = new Date(startDateStr);
@@ -285,7 +285,7 @@ export default function AnalyticsPage() {
           <MonthlyPerformance />
 
 
-          <ChartCard title="Strategy Performance">
+          {/* <ChartCard title="Strategy Performance">
           <ResponsiveContainer width="100%" height={250}>
             <BarChart data={strategyData} barSize={28} barGap={4} categoryGap={10}>
               <CartesianGrid strokeDasharray="2 4" vertical={false} />
@@ -311,7 +311,7 @@ export default function AnalyticsPage() {
             <Bar dataKey="trades" fill="#4f46e5" />
           </BarChart>
          </ResponsiveContainer>
-          </ChartCard>
+          </ChartCard> */}
 
 
           {/* <ChartCard title="Weekly Performance">

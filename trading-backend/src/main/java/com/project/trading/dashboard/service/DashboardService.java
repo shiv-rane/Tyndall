@@ -45,7 +45,7 @@ public class DashboardService {
         double drawdown = 0;
 
 
-        return new DashboardSummaryDTO(totalPnl,winRate,avgRR,totalTrades,drawdown);
+        return new DashboardSummaryDTO(totalPnl,Math.round(winRate),avgRR,totalTrades,drawdown);
     }
 
     public List<RecentTradeDTO> getRecentTrades() {

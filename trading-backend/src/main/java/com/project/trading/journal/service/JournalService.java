@@ -2,6 +2,7 @@ package com.project.trading.journal.service;
 
 import com.project.trading.auth.model.User;
 import com.project.trading.auth.repository.UserRepository;
+import com.project.trading.journal.dto.FilterTrade;
 import com.project.trading.journal.model.Journal;
 import com.project.trading.journal.repository.JournalRepository;
 import lombok.NonNull;
@@ -10,6 +11,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Locale;
 
 @Service
 public class JournalService {
@@ -61,5 +63,11 @@ public class JournalService {
         journalRepository.delete(journal);
     }
 
+    public void filterTrade(FilterTrade filterTrade){
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        String symbol = filterTrade.getSymbol().toLowerCase();
+
+    }
 
 }
