@@ -403,12 +403,11 @@ export default function AnalyticsPage() {
                           <div className="text-sm text-neutral-900">
                             {strategy.winRate?.toFixed(1)}%
                           </div>
-                          <div className="w-full bg-neutral-200 rounded-full h-1.5 mt-1">
-                            <div 
-                              className="bg-primary-500 h-1.5 rounded-full" 
-                              style={{ width: `${strategy.winRate}%` }}
-                            ></div>
-                          </div>
+                        <div className="w-full bg-neutral-200 rounded-full h-1.5 mt-1">
+                          <div className="bg-yellow-200 h-1.5 rounded-full" 
+                            style={{ width: `${strategy.winRate}%` }}
+                          ></div>
+                        </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                         <div className={`text-sm font-medium ${
