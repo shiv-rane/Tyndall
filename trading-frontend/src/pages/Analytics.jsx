@@ -5,6 +5,8 @@ import { Link } from 'react-router-dom';
 import StreakTracker from "../components/StreakTracker";
 import MonthlyPerformance from '../components/analytics/MonthlyPerformance';
 import WeeklyPerformance from '../components/analytics/WeeklyPerformance';
+import { Card, CardHeader, CardBody } from '../components/ui/Card';
+import { Badge } from '../components/ui/Badge';
 
 import {
   BarChart,
@@ -116,6 +118,7 @@ function SelectFilter({ label, options }) {
 export default function AnalyticsPage() {
   const [kpiData, setKpiData] = useState(null);
   const [trades, setTrades] = useState([]);
+  const [strategyPerformance, setStrategyPerformance] = useState([]);
   const [weeklyData, setWeeklyData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -215,6 +218,26 @@ export default function AnalyticsPage() {
 
   //   fetchWeeklyData();
   // }, []);
+
+  //fetch strategy table
+  useEffect(() => {
+    const fetchStrategyPerformance = async () => {
+      try {
+        const tokenObject = JSON.parse(localStorage.getItem('token'));
+        const token = tokenObject ? tokenObject.token : null;
+
+        const response = await axios.get('http://localhost:8080/api/v1/analytics/strategy-table', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        setStrategyPerformance(response.data);
+      } catch (err) {
+        console.error('Error fetching strategy performance:', err);
+        setStrategyPerformance([]);
+      }
+    };
+    fetchStrategyPerformance();
+  }, []);
+
 
   const getBarColor = (pnl) => (pnl >= 0 ? '#22c55e' : '#ef4444'); // green/red
 
@@ -335,6 +358,82 @@ export default function AnalyticsPage() {
           <StreakTracker trades={trades} />
           </ChartCard>
 
+        </div>
+
+        <div className="mt-6 w-full">
+          <Card className="w-full">
+            <CardHeader 
+              title="Strategy Performance Analysis" 
+              subtitle="Detailed breakdown of each trading strategy"
+            />
+            <CardBody className="px-0">
+              <div className="overflow-x-auto">
+                <table className="w-full divide-y divide-neutral-200">
+                  <thead>
+                    <tr>
+                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">
+                        Strategy
+                      </th>
+                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">
+                        Total Trades
+                      </th>
+                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">
+                        Win Rate
+                      </th>
+                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">
+                        Total P&L
+                      </th>
+                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">
+                        Avg. P&L Per Trade
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-neutral-200">
+                    {strategyPerformance?.map((strategy) => (
+                      <tr key={strategy.strategy} className="hover:bg-neutral-50">
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <Badge variant="primary" size="sm">
+                            {strategy.strategy}
+                          </Badge>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="text-sm text-neutral-900">{strategy.totalTrades}</div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="text-sm text-neutral-900">
+                            {strategy.winRate?.toFixed(1)}%
+                          </div>
+                          <div className="w-full bg-neutral-200 rounded-full h-1.5 mt-1">
+                            <div 
+                              className="bg-primary-500 h-1.5 rounded-full" 
+                              style={{ width: `${strategy.winRate}%` }}
+                            ></div>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                        <div className={`text-sm font-medium ${
+                          strategy.totalPnl >= 0 ? 'text-green-600' : 'text-red-600'
+                        }`}>
+                          {strategy.totalPnl >= 0 ? '+' : ''}
+                          ${strategy.totalPnl?.toFixed(2)}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className={`text-sm font-medium ${
+                          strategy.avgPnlPerTrade >= 0 ? 'text-green-600' : 'text-red-600'
+                        }`}>
+                          {strategy.avgPnlPerTrade >= 0 ? '+' : ''}
+                          ${strategy.avgPnlPerTrade?.toFixed(2)}
+                        </div>
+                      </td>
+                      </tr>
+                      
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </CardBody>
+          </Card>
         </div>
 
         {/* Filters */}
