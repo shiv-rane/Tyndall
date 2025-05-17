@@ -11,15 +11,6 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 
-<Line
-  type="monotone"
-  dataKey="value" // This should remain 'value' as we mapped capital to value
-  stroke="#4f46e5"
-  strokeWidth={2}
-  dot={false}
-  activeDot={{ r: 6 }}
-/>
-
 const Dashboard = () => {
   const navigate = useNavigate();
   const [stats, setStats] = useState({});
@@ -57,12 +48,12 @@ const Dashboard = () => {
         const processedEquityData = equityRes.data
           .map(item => ({
             date: item.date,
-            value: item.capital // Make sure this matches your backend response
+            value: item.capital 
           }))
           .sort((a, b) => new Date(a.date) - new Date(b.date));
 
         setStats(statsRes.data);
-        setEquityData(processedEquityData); // Set the processed data directly
+        setEquityData(processedEquityData); 
         setRecentTrades(tradesRes.data || []);
         setSmartTip(tipRes.data.tip || "");
       } catch (error) {
@@ -175,10 +166,10 @@ const Dashboard = () => {
                       month: 'long',
                       day: 'numeric'
                     })}
-                    formatter={(value) => [formatCurrency(value), 'Balance']}
+                    formatter={(value) => [formatCurrency(value), 'Capital']}
                   />
                   <Line
-                    type="monotone"
+                    type="linear" 
                     dataKey="value"
                     stroke="#4f46e5"
                     strokeWidth={2}
