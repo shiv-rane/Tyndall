@@ -1,6 +1,24 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate,Link } from "react-router-dom";
 import axios from "axios";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from 'recharts';
+
+<Line
+  type="monotone"
+  dataKey="value" // This should remain 'value' as we mapped capital to value
+  stroke="#4f46e5"
+  strokeWidth={2}
+  dot={false}
+  activeDot={{ r: 6 }}
+/>
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -20,7 +38,7 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const token = JSON.parse(localStorage.getItem("token"))?.token; // Get token
+        const token = JSON.parse(localStorage.getItem("token"))?.token;
         
         const axiosConfig = {
           headers: {
@@ -35,14 +53,20 @@ const Dashboard = () => {
           axios.get("/api/user/suggestions", axiosConfig),
         ]);
 
+        // Process equity data immediately after receiving it
+        const processedEquityData = equityRes.data
+          .map(item => ({
+            date: item.date,
+            value: item.capital // Make sure this matches your backend response
+          }))
+          .sort((a, b) => new Date(a.date) - new Date(b.date));
+
         setStats(statsRes.data);
-        setEquityData(equityRes.data);
+        setEquityData(processedEquityData); // Set the processed data directly
         setRecentTrades(tradesRes.data || []);
         setSmartTip(tipRes.data.tip || "");
       } catch (error) {
         console.error("Error fetching dashboard data", error);
-        
-        // Handle unauthorized access
         if (error.response?.status === 401) {
           localStorage.removeItem("token");
           navigate("/login");
@@ -53,6 +77,7 @@ const Dashboard = () => {
     fetchData();
   }, [navigate]);
 
+   const formatCurrency = (value) => `₹${value?.toLocaleString() || 0}`;
   return (
     <div className="flex min-h-screen bg-gray-100">
 
@@ -126,14 +151,50 @@ const Dashboard = () => {
         </div>
 
         {/* Equity Curve */}
-        <div className="bg-white rounded-xl shadow p-6 mb-8">
+         <div className="bg-white rounded-xl shadow p-6 mb-8">
           <h2 className="text-xl font-semibold mb-4 text-indigo-600">Capital Over Time</h2>
-          {/* GRAPH PLACEHOLDER */}
-          <div className="w-full h-64 bg-gray-200 rounded flex items-center justify-center text-gray-500">
-            [Equity Curve Graph Coming Soon]
+          <div className="w-full h-64">
+            {equityData.length > 0 ? (
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={equityData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis 
+                    dataKey="date"
+                    tickFormatter={(date) => new Date(date).toLocaleDateString('en-IN', {
+                      month: 'short',
+                      day: 'numeric'
+                    })}
+                  />
+                  <YAxis
+                    tickFormatter={(value) => `₹${value.toLocaleString('en-IN')}`}
+                  />
+                  <Tooltip
+                    labelFormatter={(date) => new Date(date).toLocaleDateString('en-IN', {
+                      weekday: 'long',
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric'
+                    })}
+                    formatter={(value) => [formatCurrency(value), 'Balance']}
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="value"
+                    stroke="#4f46e5"
+                    strokeWidth={2}
+                    dot={false}
+                    activeDot={{ r: 6 }}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="w-full h-full bg-gray-50 rounded flex items-center justify-center text-gray-500">
+                {equityData.length === 0 ? 'Loading equity data...' : 'No equity data available'}
+              </div>
+            )}
           </div>
         </div>
-
+        
         {/* Recent Trades */}
         <div className="bg-white rounded-xl shadow p-6 mb-8">
           <h2 className="text-xl font-semibold mb-4 text-indigo-600">Recent Trades</h2>

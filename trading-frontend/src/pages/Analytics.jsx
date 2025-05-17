@@ -365,7 +365,7 @@ useEffect(() => {
         </div>
 
         {/* Filters */}
-        <div className="mt-8 bg-white p-4 rounded-xl shadow-sm">
+        {/* <div className="mt-8 bg-white p-4 rounded-xl shadow-sm">
           <div className="flex flex-wrap gap-6">
             <SelectFilter
               label="Date Range"
@@ -384,7 +384,7 @@ useEffect(() => {
               ]}
             />
           </div>
-        </div>
+        </div> */}
       </main>
     </div>
   );
