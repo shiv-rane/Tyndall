@@ -106,7 +106,10 @@ export default function AnalyticsPage() {
   const [kpiData, setKpiData] = useState(null);
   const [trades, setTrades] = useState([]);
   const [strategyPerformance, setStrategyPerformance] = useState([]);
+  const [equityData, setEquityData] = useState([]);
   const [weeklyData, setWeeklyData] = useState([]);
+  const [equityLoading, setEquityLoading] = useState(true);
+  const [equityError, setEquityError] = useState(null); 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [filters, setFilters] = useState({
@@ -166,45 +169,6 @@ export default function AnalyticsPage() {
   }, []);
 
 
-  //fetch weekly data
-  // useEffect(() => {
-  //   const fetchWeeklyData = async () => {
-  //     try {
-  //       const tokenObject = JSON.parse(localStorage.getItem('token'));
-  //       const token = tokenObject ? tokenObject.token : null;
-
-  //       const response = await axios.get('http://localhost:8080/api/v1/analytics/weekly-performance', {
-  //         headers: {
-  //           Authorization: `Bearer ${token}`,
-  //         },
-  //       });
-  //       const backendData = response.data;
-
-  //       const formatWeek = (startDateStr) => {
-  //         const start = new Date(startDateStr);
-  //         const end = new Date(start);
-  //         end.setDate(start.getDate() + 6);
-
-  //         const options = { month: "short", day: "numeric" };
-  //         return `${start.toLocaleDateString("en-US", options)} - ${end.toLocaleDateString(
-  //           "en-US",
-  //           options
-  //         )}`;
-  //       };
-
-  //       const transformed = backendData.map((entry) => ({
-  //         week: formatWeek(entry.weekStart),
-  //         pnl: entry.pnl,
-  //       }));
-
-  //       setWeeklyData(transformed); 
-  //     } catch (error) {
-  //       console.error("Error fetching weekly performance data", error);
-  //     }
-  //   };
-
-  //   fetchWeeklyData();
-  // }, []);
 
   //fetch strategy table
   useEffect(() => {
@@ -225,6 +189,36 @@ export default function AnalyticsPage() {
     fetchStrategyPerformance();
   }, []);
 
+
+  // Fetch equity curve data
+useEffect(() => {
+  const fetchEquityData = async () => {
+    try {
+      const tokenObject = JSON.parse(localStorage.getItem('token'));
+      const token = tokenObject?.token;
+
+      const response = await axios.get(
+        'http://localhost:8080/api/v1/analytics/equity-curve', 
+        {
+          headers: { 'Authorization': `Bearer ${token}` }
+        }
+      );
+      
+      // Transform data if needed (ensure date format matches)
+      const formattedData = response.data.map(item => ({
+        date: item.date, // Assuming ISO format from backend
+        value: item.capital // Adjust according to your API response
+      }));
+      
+      setEquityData(formattedData);
+    } catch (err) {
+      console.error('Error fetching equity curve:', err);
+      setEquityData([]);
+    }
+  };
+
+  fetchEquityData();
+}, []);
 
   const getBarColor = (pnl) => (pnl >= 0 ? '#22c55e' : '#ef4444'); // green/red
 
@@ -262,83 +256,31 @@ export default function AnalyticsPage() {
         {/* Charts */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <ChartCard title="Equity Curve">
-            <ResponsiveContainer width="100%" height={250}>
-              <LineChart data={equityData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="date" />
-                <YAxis />
-                <Tooltip />
-                <Line type="monotone" dataKey="value" stroke="#6366f1" strokeWidth={2} />
-              </LineChart>
-            </ResponsiveContainer>
-          </ChartCard>
+          <ResponsiveContainer width="100%" height={250}>
+            <LineChart data={equityData}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis 
+                dataKey="date" 
+                tickFormatter={(date) => new Date(date).toLocaleDateString('en-US', { month: 'short', day: '2-digit' })}
+              />
+              <YAxis />
+              <Tooltip 
+                labelFormatter={(value) => new Date(value).toLocaleDateString()}
+                formatter={(value) => `₹${value.toLocaleString()}`}
+              />
+              <Line 
+                type="monotone" 
+                dataKey="value" 
+                stroke="#6366f1" 
+                strokeWidth={2}
+                dot={false}
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        </ChartCard>
 
-          {/* <ChartCard title="Monthly Performance">
-            <ResponsiveContainer width="100%" height={240}>
-              <BarChart
-                data={monthlyData}
-                margin={{ top: 10, right: 20, left: 0, bottom: 0 }}
-                barGap={8}
-              >
-                <CartesianGrid strokeDasharray="2 4" vertical={false} />
-                <XAxis dataKey="month" tickLine={false} axisLine={false} />
-                <YAxis tickLine={false} axisLine={false} />
-                <Tooltip />
-                <Bar dataKey="pnl" barSize={30}>
-                  {monthlyData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={getBarColor(entry.pnl)} />
-                  ))}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
-          </ChartCard> */}
           <MonthlyPerformance />
 
-
-          {/* <ChartCard title="Strategy Performance">
-          <ResponsiveContainer width="100%" height={250}>
-            <BarChart data={strategyData} barSize={28} barGap={4} categoryGap={10}>
-              <CartesianGrid strokeDasharray="2 4" vertical={false} />
-              <XAxis dataKey="strategy" tickLine={false} axisLine={false} />
-              <YAxis tickLine={false} axisLine={false} />
-              <Tooltip />
-              <Bar dataKey="pnl">
-                {strategyData.map((entry, index) => (
-                  <Cell key={index} fill={getBarColor(entry.pnl)} />
-                ))}
-              </Bar>
-            </BarChart>
-          </ResponsiveContainer>
-          </ChartCard>
-
-          <ChartCard title="RRR Distribution">
-          <ResponsiveContainer width="100%" height={250}>
-          <BarChart data={rrrData} barSize={28} barGap={4} categoryGap={10}>
-            <CartesianGrid strokeDasharray="2 4" vertical={false} />
-            <XAxis dataKey="range" tickLine={false} axisLine={false} />
-            <YAxis tickLine={false} axisLine={false} />
-            <Tooltip />
-            <Bar dataKey="trades" fill="#4f46e5" />
-          </BarChart>
-         </ResponsiveContainer>
-          </ChartCard> */}
-
-
-          {/* <ChartCard title="Weekly Performance">
-            <ResponsiveContainer width="100%" height={250}>
-              <BarChart data={weeklyData} barSize={28} barGap={4} categoryGap={10}>
-                <CartesianGrid strokeDasharray="2 4" vertical={false} />
-                <XAxis dataKey="week" tickLine={false} axisLine={false} />
-                <YAxis tickLine={false} axisLine={false} />
-                <Tooltip />
-                <Bar dataKey="pnl">
-                  {weeklyData.map((entry, index) => (
-                    <Cell key={index} fill={getBarColor(entry.pnl)} />
-                  ))}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
-          </ChartCard> */}
           <WeeklyPerformance />
 
           <ChartCard title="Trading Activity Calendar">

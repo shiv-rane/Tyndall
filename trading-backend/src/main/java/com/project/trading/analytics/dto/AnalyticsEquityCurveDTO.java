@@ -4,8 +4,8 @@ import java.time.LocalDate;
 
 public class AnalyticsEquityCurveDTO {
 
-    LocalDate date;
-    long capital;
+    private LocalDate date;
+    private long capital;
 
     public AnalyticsEquityCurveDTO(LocalDate date, Long capital) {
         this.date = date;
