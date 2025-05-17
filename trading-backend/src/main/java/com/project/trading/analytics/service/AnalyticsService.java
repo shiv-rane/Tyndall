@@ -1,6 +1,8 @@
 package com.project.trading.analytics.service;
 
 import com.project.trading.analytics.dto.*;
+import com.project.trading.auth.model.User;
+import com.project.trading.auth.repository.UserRepository;
 import com.project.trading.journal.model.Journal;
 import com.project.trading.journal.repository.JournalRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -19,6 +21,9 @@ public class AnalyticsService {
 
     @Autowired
     private JournalRepository journalRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     public AnalyticsSummaryDTO getSummary(String email){
         List<Journal> trades = journalRepository.findAllByUserEmail(email);
@@ -133,4 +138,23 @@ public class AnalyticsService {
         return result;
     }
 
+
+    public List<AnalyticsEquityCurveDTO> getEquityCurve(){
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        List<Journal> trades = journalRepository.findAllByUserEmailOrderByDateAsc(email);
+        User user = userRepository.findByEmail(email).orElseThrow();
+        long capital = user.getInitial_capital();
+
+        Map<LocalDate, Long> dailyPnL = new TreeMap<>();
+        for (Journal trade : trades) {
+            LocalDate date = trade.getDate();
+            dailyPnL.put(date, dailyPnL.getOrDefault(date, 0L) + (long)trade.getPnl());
+        }
+        List<AnalyticsEquityCurveDTO> equityCurve = new ArrayList<>();
+        for (Map.Entry<LocalDate, Long> entry : dailyPnL.entrySet()) {
+            capital += entry.getValue();
+            equityCurve.add(new AnalyticsEquityCurveDTO(entry.getKey(), capital));
+        }
+        return equityCurve;
+    }
 }

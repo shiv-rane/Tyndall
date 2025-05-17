@@ -28,19 +28,6 @@ const equityData = [
   { date: '2024-03-01', value: 115000 },
 ];
 
-
-// const strategyData = [
-//   { strategy: 'Breakout', pnl: 7500 },
-//   { strategy: 'Reversal', pnl: -3200 },
-//   { strategy: 'Scalping', pnl: 4400 },
-// ];
-
-// const rrrData = [
-//   { range: '0-1.0', trades: 15 },
-//   { range: '1.0-2.0', trades: 30 },
-//   { range: '2.0-3.0', trades: 12 },
-// ];
-
 const formatWeek = (startDateStr) => {
   const start = new Date(startDateStr);
   const end = new Date(start);

@@ -50,4 +50,9 @@ public class AnalyticsController {
     public ResponseEntity<List<MonthlyPerformanceDTO>> getMonthlyPerformance(){
         return ResponseEntity.ok(analyticsService.getMonthlyPerformance());
     }
+
+    @GetMapping("/equity-curve")
+    public ResponseEntity<List<AnalyticsEquityCurveDTO>> getEquityCurve(){
+        return ResponseEntity.ok(analyticsService.getEquityCurve());
+    }
 }

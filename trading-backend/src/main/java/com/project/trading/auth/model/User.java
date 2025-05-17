@@ -22,6 +22,9 @@ public class User {
     @Column(nullable = false)
     String password;
 
+    @Column
+    Long initial_capital;
+
     @Column(nullable = false, columnDefinition = "boolean default false")
     Boolean isPremium;
 
@@ -60,6 +63,10 @@ public class User {
         this.password = password;
     }
 
+    public Long getInitial_capital() {return initial_capital;}
+
+    public void setInitial_capital(Long initial_capital) {this.initial_capital = initial_capital;}
+
     public Boolean getPremium() {
         return isPremium;
     }
@@ -67,6 +74,5 @@ public class User {
     public void setPremium(Boolean premium) {
         isPremium = premium;
     }
-
 
 }
