@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate,Link } from "react-router-dom";
+import { FaUserCircle } from "react-icons/fa";
 import axios from "axios";
+import Sidebar from '../components/Sidebar';
 import {
   LineChart,
   Line,
@@ -73,43 +75,51 @@ const Dashboard = () => {
     <div className="flex min-h-screen bg-gray-100">
 
       {/* Sidebar */}
-      <div className="w-64 bg-indigo-600 text-white flex flex-col p-6 h-screen sticky top-0">
-  <h1 className="text-2xl font-bold mb-10 tracking-wide">TradeSaaS</h1>
-  
-  <nav className="flex flex-col gap-2">
-    <a
-      href="/dashboard"
-      className="p-3 rounded-lg hover:bg-indigo-500 hover:scale-[1.02] transition-all duration-200 font-medium tracking-wide"
-    >
-      Dashboard
-    </a>
-    <a
-      href="/journal"
-      className="p-3 rounded-lg hover:bg-indigo-500 hover:scale-[1.02] transition-all duration-200 font-medium tracking-wide"
-    >
-      Journal
-    </a>
-    <a
-      href="/analytics"
-      className="p-3 rounded-lg hover:bg-indigo-500 hover:scale-[1.02] transition-all duration-200 font-medium tracking-wide"
-    >
-      Analytics
-    </a>
-  </nav>
+      <div className="w-64 bg-indigo-600 text-white flex flex-col p-6 h-screen sticky top-0 relative">
+          <h1 className="text-2xl font-bold mb-10 tracking-wide">TradeSaaS</h1>
 
-  {/* Logout Button - positioned at absolute bottom */}
-  <div className="mt-auto">
-    <button
-      onClick={() => {
-        localStorage.removeItem('token');
-        window.location.href = '/login';
-      }}
-      className="w-full p-3 text-left rounded-lg hover:bg-indigo-400 bg-indigo-500 transition-colors font-medium tracking-wide"
-    >
-      Logout
-    </button>
-  </div>
-</div>
+          <nav className="flex flex-col gap-2">
+            <a
+              href="/dashboard"
+              className="p-3 rounded-lg hover:bg-indigo-500 hover:scale-[1.02] transition-all duration-200 font-medium tracking-wide"
+            >
+              Dashboard
+            </a>
+            <a
+              href="/journal"
+              className="p-3 rounded-lg hover:bg-indigo-500 hover:scale-[1.02] transition-all duration-200 font-medium tracking-wide"
+            >
+              Journal
+            </a>
+            <a
+              href="/analytics"
+              className="p-3 rounded-lg hover:bg-indigo-500 hover:scale-[1.02] transition-all duration-200 font-medium tracking-wide"
+            >
+              Analytics
+            </a>
+          </nav>
+          <div className="mt-auto mb-2">
+          <button
+            onClick={() => {
+              window.location.href = '/profile';
+            }}
+            className="w-full p-3 text-left rounded-lg hover:bg-indigo-500 hover:scale-[1.02] transition-all duration-200 font-medium tracking-wide flex items-center gap-2"
+          >
+            <FaUserCircle size={20} /> My Profile
+          </button>
+        </div>
+          <div className="pb-2">
+            <button
+              onClick={() => {
+                localStorage.removeItem('token');
+                window.location.href = '/login';
+              }}
+              className="w-full p-3 text-left rounded-lg hover:bg-indigo-400 bg-indigo-500 transition-colors font-medium tracking-wide"
+            >
+              Logout
+            </button>
+          </div>
+        </div>
 
 
       {/* Main Content */}

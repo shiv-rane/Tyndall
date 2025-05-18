@@ -48,7 +48,7 @@ function Sidebar() {
         <Link to="/journal" className="p-3 rounded-lg hover:bg-indigo-500 hover:scale-[1.02] transition-all duration-200 font-medium tracking-wide">Journal</Link>
         <Link to="/analytics" className="p-3 rounded-lg hover:bg-indigo-500 hover:scale-[1.02] transition-all duration-200 font-medium tracking-wide">Analytics</Link>
       </nav>
-      <div className="absolute bottom-0 left-0 right-0 p-6 border-t border-indigo-500">
+      <div className="absolute bottom-0 left-0 right-0 p-6 border-t border-indigo-400">
         <button
           onClick={() => {
             localStorage.removeItem('token');

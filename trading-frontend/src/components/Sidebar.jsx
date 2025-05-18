@@ -1,43 +1,53 @@
 import { Link, useLocation } from "react-router-dom";
 import { Home, BookOpen, BarChart2 } from "lucide-react"; // Icons for sidebar
+import { FaUserCircle } from "react-icons/fa";
 
 const Sidebar = () => {
-  const location = useLocation(); // Track current route
-  const currentPath = location.pathname;
-
-  const links = [
-    { name: "Dashboard", href: "/dashboard", icon: Home },
-    { name: "Journal", href: "/journal", icon: BookOpen },
-    { name: "Analytics", href: "/analytics", icon: BarChart2 },
-  ];
-
   return (
-    <div className="flex min-h-screen">
-      {/* Sidebar */}
-      <div className="w-64 bg-indigo-600 text-white flex flex-col p-6 fixed h-full">
-        <h1 className="text-2xl font-bold mb-10 tracking-wide">TradeSaaS</h1>
+    <div className="w-64 bg-indigo-600 text-white flex flex-col p-6 h-screen sticky top-0">
+      <h1 className="text-2xl font-bold mb-10 tracking-wide">TradeSaaS</h1>
 
-        <nav className="flex flex-col gap-4">
-          {links.map(({ name, href, icon: Icon }) => (
-            <Link
-              key={name}
-              to={href}
-              className={`flex items-center gap-3 p-3 rounded-lg transition-all duration-200 font-medium tracking-wide ${
-                currentPath === href
-                  ? "bg-indigo-500 scale-[1.02]"
-                  : "hover:bg-indigo-500 hover:scale-[1.02]"
-              }`}
-            >
-              <Icon size={20} />
-              {name}
-            </Link>
-          ))}
-        </nav>
-      </div>
+      <nav className="flex flex-col gap-2">
+        <a
+          href="/dashboard"
+          className="p-3 rounded-lg hover:bg-indigo-500 hover:scale-[1.02] transition-all duration-200 font-medium tracking-wide"
+        >
+          Dashboard
+        </a>
+        <a
+          href="/journal"
+          className="p-3 rounded-lg hover:bg-indigo-500 hover:scale-[1.02] transition-all duration-200 font-medium tracking-wide"
+        >
+          Journal
+        </a>
+        <a
+          href="/analytics"
+          className="p-3 rounded-lg hover:bg-indigo-500 hover:scale-[1.02] transition-all duration-200 font-medium tracking-wide"
+        >
+          Analytics
+        </a>
+      </nav>
 
-      {/* Main Content */}
-      <div className="flex-1 p-8 ml-64"> {/* Give margin-left to avoid sidebar overlap */}
-        {/* Your page content (Dashboard, Journal, etc.) will go here */}
+      {/* Profile Button */}
+      <button
+        onClick={() => (window.location.href = "/profile")}
+        className="mt-6 w-full p-3 text-left flex items-center gap-2 rounded-lg hover:bg-indigo-500 hover:scale-[1.02] transition-all duration-200 font-medium tracking-wide"
+      >
+        <FaUserCircle className="text-xl" />
+        My Profile
+      </button>
+
+      {/* Logout Button */}
+      <div className="absolute bottom-0 left-0 right-0 p-6 border-t border-indigo-400">
+        <button
+          onClick={() => {
+            localStorage.removeItem("token");
+            window.location.href = "/login";
+          }}
+          className="w-full p-3 text-left rounded-lg hover:bg-indigo-400 bg-indigo-500 transition-colors font-medium tracking-wide"
+        >
+          Logout
+        </button>
       </div>
     </div>
   );

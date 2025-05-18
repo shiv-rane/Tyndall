@@ -1,6 +1,6 @@
 // TokenWatcher.jsx
 import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const isTokenExpired = (token) => {
   if (!token) return true;
@@ -15,11 +15,14 @@ const isTokenExpired = (token) => {
 
 const TokenWatcher = () => {
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     const checkToken = () => {
       const token = localStorage.getItem("token");
-      if (isTokenExpired(token)) {
+      const publicRoutes = ["/login", "/register"];
+
+      if (isTokenExpired(token) && !publicRoutes.includes(location.pathname)) {
         localStorage.removeItem("token");
         navigate("/login");
       }
@@ -29,7 +32,7 @@ const TokenWatcher = () => {
     checkToken(); // run immediately on mount
 
     return () => clearInterval(intervalId);
-  }, [navigate]);
+  }, [navigate, location.pathname]);
 
   return null;
 };
