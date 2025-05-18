@@ -3,6 +3,7 @@ import React from 'react';
 const Profile = () => {
   return (
     <div className="min-h-screen bg-gray-50 p-8">
+      
       {/* Profile Header */}
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-indigo-600">Profile Settings</h1>

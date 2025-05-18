@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { useNavigate,Link } from "react-router-dom";
 import { FaUserCircle } from "react-icons/fa";
 import axios from "axios";
-import Sidebar from '../components/Sidebar';
 import {
   LineChart,
   Line,
