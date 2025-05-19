@@ -1,12 +1,10 @@
 package com.project.trading.profile.controller;
 
+import com.project.trading.profile.dto.ChangePassDTO;
 import com.project.trading.profile.service.ProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/profile")
@@ -26,4 +24,17 @@ public class ProfileController {
         profileService.deleteAccount();
         return ResponseEntity.ok("Account deleted successfully");
     }
+
+    @PutMapping("/change-password")
+    public ResponseEntity<String> changePass(@RequestBody ChangePassDTO changePassDTO){
+        profileService.changePass(changePassDTO);
+        return ResponseEntity.ok("Password changed successfully");
+    }
+
+    @PutMapping("/change-name")
+    public ResponseEntity<String> changeName(String name){
+        profileService.changeName(name);
+        return ResponseEntity.ok("Name changed successfully");
+    }
+
 }
