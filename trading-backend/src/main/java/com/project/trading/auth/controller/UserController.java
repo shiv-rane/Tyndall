@@ -3,6 +3,7 @@ package com.project.trading.auth.controller;
 import com.project.trading.auth.dto.LoginRequest;
 import com.project.trading.auth.dto.RegisterRequest;
 import com.project.trading.auth.service.UserService;
+import com.project.trading.twofa.OtpRequestDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,13 +25,18 @@ public class UserController {
         Map<String, String> response = new HashMap<>();
 
         try {
-            String token = userService.registerUser(registerRequest);
-            response.put("token" , token);
-            return ResponseEntity.ok(response);
+            boolean result = userService.registerUser(registerRequest);
+            if (result) {
+                response.put("message", "Registration successful. OTP sent to your email.");
+                return ResponseEntity.ok(response);
+            } else {
+                response.put("error", "Registration failed");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+            }
         } catch (IllegalArgumentException e) {
             response.put("error", e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-        }catch (Exception e){
+        } catch (Exception e) {
             response.put("error", "An unexpected error occurred");
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
@@ -44,6 +50,22 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
+    @PostMapping("/verify-otp")
+    public ResponseEntity<Map<String,String>> verifyOtp(@RequestBody OtpRequestDTO otpRequestDTO){
+        Map<String , String> response = new HashMap<>();
+
+        try{
+            String token = userService.verifyOtp(otpRequestDTO.getEmail(),otpRequestDTO.getOtp());
+            response.put("token", token);
+            return ResponseEntity.ok(response);
+        }catch (IllegalArgumentException e){
+            response.put("error", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }catch (Exception e){
+            response.put("error", "An unexpected error occurred");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
 }
 
 

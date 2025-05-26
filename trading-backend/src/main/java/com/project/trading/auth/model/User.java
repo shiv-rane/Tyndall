@@ -1,6 +1,7 @@
 package com.project.trading.auth.model;
 
 import com.project.trading.journal.model.Journal;
+import com.project.trading.twofa.OtpEntity;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -28,8 +29,14 @@ public class User {
     @Column(nullable = false, columnDefinition = "boolean default false")
     Boolean isPremium;
 
+    @Column(nullable = false, columnDefinition = "boolean default false")
+    Boolean isVerified;
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Journal> trades;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    private OtpEntity otpEntity;
 
     public Integer getId() {
         return id;
@@ -75,4 +82,7 @@ public class User {
         isPremium = premium;
     }
 
+    public Boolean getVerified() {return isVerified;}
+
+    public void setVerified(Boolean verified) {isVerified = verified;}
 }
