@@ -25,8 +25,8 @@ export default function Register() {
         password: formData.password,
         confirm_password: formData.confirm_password
       });
-      localStorage.setItem('token', JSON.stringify(data)); 
-      navigate('/journal');
+      localStorage.setItem('emailForOtp', formData.email)
+      navigate('/verify-otp');
     } catch (err) {
       setError(err.response?.data?.error || 'Registration failed');
     }
@@ -45,7 +45,7 @@ export default function Register() {
       {/* Right Side - Registration Form */}
       <div className="w-full lg:w-1/2 p-8 flex items-center justify-center">
         <div className="w-full max-w-md">
-          <h2 className="text-3xl font-bold text-gray-900 mb-6">Create your LuxAlgo account</h2>
+          <h2 className="text-3xl font-bold text-gray-900 mb-6">Create your TradeSaaS account</h2>
           
           {error && (
             <div className="mb-4 p-3 bg-red-50 text-red-700 rounded-md">{error}</div>

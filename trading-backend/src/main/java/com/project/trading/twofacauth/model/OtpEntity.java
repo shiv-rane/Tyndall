@@ -1,4 +1,4 @@
-package com.project.trading.twofa;
+package com.project.trading.twofacauth.model;
 
 import com.project.trading.auth.model.User;
 import jakarta.persistence.*;

@@ -9,6 +9,7 @@ import Dashboard from './pages/Dashboard';
 import Analytics from './pages/Analytics';
 import { Navigate } from 'react-router-dom';
 import TokenWatcher from './components/TokenWatcher';
+import OTPVerificationPage from './pages/OtpVerification';
 
 export default function App() {
   return (
@@ -17,6 +18,7 @@ export default function App() {
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/verify-otp" element={<OTPVerificationPage />} />
         
         {/* Protected Routes Wrapper */}
         <Route element={<ProtectedRoute />}>

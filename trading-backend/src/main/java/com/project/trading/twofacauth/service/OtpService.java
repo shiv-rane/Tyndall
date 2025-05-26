@@ -1,4 +1,4 @@
-package com.project.trading.twofa;
+package com.project.trading.twofacauth.service;
 
 import org.springframework.stereotype.Service;
 

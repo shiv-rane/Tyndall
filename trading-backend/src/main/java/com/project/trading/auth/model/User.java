@@ -1,7 +1,7 @@
 package com.project.trading.auth.model;
 
 import com.project.trading.journal.model.Journal;
-import com.project.trading.twofa.OtpEntity;
+import com.project.trading.twofacauth.model.OtpEntity;
 import jakarta.persistence.*;
 
 import java.util.List;

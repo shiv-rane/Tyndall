@@ -1,6 +1,7 @@
-package com.project.trading.twofa;
+package com.project.trading.twofacauth.dto;
 
 public class OtpRequestDTO {
+
     private String email;
     private String otp;
 

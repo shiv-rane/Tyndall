@@ -3,7 +3,7 @@ package com.project.trading.auth.controller;
 import com.project.trading.auth.dto.LoginRequest;
 import com.project.trading.auth.dto.RegisterRequest;
 import com.project.trading.auth.service.UserService;
-import com.project.trading.twofa.OtpRequestDTO;
+import com.project.trading.twofacauth.dto.OtpRequestDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

@@ -20,7 +20,7 @@ const TokenWatcher = () => {
   useEffect(() => {
     const checkToken = () => {
       const token = localStorage.getItem("token");
-      const publicRoutes = ["/login", "/register"];
+      const publicRoutes = ["/login", "/register","/verify-otp"];
 
       if (isTokenExpired(token) && !publicRoutes.includes(location.pathname)) {
         localStorage.removeItem("token");
