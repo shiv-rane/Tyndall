@@ -1,7 +1,7 @@
 // WeeklyPerformance.jsx
 import { useState, useEffect } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
-import axiosInstance from '../api/axios';
+import axiosInstance from "../../api/axios";
 
 function ChartCard({ title, children }) {
     return (
