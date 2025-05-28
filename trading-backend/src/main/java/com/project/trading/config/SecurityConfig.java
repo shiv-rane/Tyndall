@@ -49,7 +49,7 @@ public class SecurityConfig {
 
     private CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
-        corsConfiguration.setAllowedOrigins(Arrays.asList("http://localhost:5173")); // Frontend URL
+        corsConfiguration.setAllowedOrigins(Arrays.asList("http://localhost:5173","https://trading-saas.onrender.com")); // Frontend URL
         corsConfiguration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         corsConfiguration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "Accept"));
         corsConfiguration.setAllowCredentials(true); // Allow cookies, authorization tokens, etc.
