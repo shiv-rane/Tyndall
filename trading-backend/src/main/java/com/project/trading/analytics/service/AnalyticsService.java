@@ -27,6 +27,9 @@ public class AnalyticsService {
 
     public AnalyticsSummaryDTO getSummary(String email){
         List<Journal> trades = journalRepository.findAllByUserEmail(email);
+        User user = userRepository.findByEmail(email).orElseThrow();
+        long capital = user.getInitial_capital();
+        if (capital == 0) capital = 1;
 
         if(trades.isEmpty()){
             throw new EntityNotFoundException("No trade was found");
@@ -35,6 +38,11 @@ public class AnalyticsService {
         double totalPnl = trades.stream().mapToDouble(Journal::getPnl).sum();
         int totalTrades = trades.size();
 
+        Map<LocalDate, Long> dailyPnL = new TreeMap<>();
+        for (Journal trade : trades) {
+            LocalDate date = trade.getDate();
+            dailyPnL.put(date, dailyPnL.getOrDefault(date, 0L) + (long) trade.getPnl());
+        }
         long wins = trades.stream().filter(t -> t.getPnl() > 0).count();
         double winRate = totalTrades == 0 ? 0 : (wins * 100.0) / totalTrades;
 
@@ -42,7 +50,19 @@ public class AnalyticsService {
                 .filter(t -> t.getEntryPrice() != 0)
                 .mapToDouble(t -> Math.abs(t.getPnl() / (t.getEntryPrice() * t.getQuantity())))
                 .average().orElse(0);
+        long peak = capital;
+        long equity = capital;
         double maxDrawdown=0;
+        for (Map.Entry<LocalDate, Long> entry : dailyPnL.entrySet()) {
+            equity += entry.getValue();
+
+            if (equity > peak) {
+                peak = equity;
+            } else {
+                double drawdown = ((double)(peak - equity) / peak) * 100.0;
+                maxDrawdown = Math.max(maxDrawdown, drawdown);
+            }
+        }
 
         return new AnalyticsSummaryDTO(totalPnl, winRate, avgRR, totalTrades,maxDrawdown);
     }

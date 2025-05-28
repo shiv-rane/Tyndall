@@ -5,14 +5,14 @@ public class AnalyticsSummaryDTO {
     private int totalTrades;
     private double winRate;
     private double avgRiskReward;
-    private double maxDrawdrown;
+    private double maxDrawdown;
 
-    public AnalyticsSummaryDTO(double totalPnl,  double winRate, double avgRiskReward,int totalTrades, double maxDrawdrown) {
+    public AnalyticsSummaryDTO(double totalPnl,  double winRate, double avgRiskReward,int totalTrades, double maxDrawdown) {
         this.totalPnl = totalPnl;
         this.totalTrades = totalTrades;
         this.winRate = winRate;
         this.avgRiskReward = avgRiskReward;
-        this.maxDrawdrown=maxDrawdrown;
+        this.maxDrawdown = maxDrawdown;
     }
 
     public double getTotalPnl() {
@@ -47,11 +47,11 @@ public class AnalyticsSummaryDTO {
         this.avgRiskReward = avgRiskReward;
     }
 
-    public double getMaxDrawdrown() {
-        return maxDrawdrown;
+    public double getMaxDrawdown() {
+        return maxDrawdown;
     }
 
-    public void setMaxDrawdrown(double maxDrawdrown) {
-        this.maxDrawdrown = maxDrawdrown;
+    public void setMaxDrawdown(double maxDrawdown) {
+        this.maxDrawdown = maxDrawdown;
     }
 }

@@ -224,9 +224,9 @@ const handleSaveName = async () => {
               className="col-span-2 p-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
               readOnly
             />
-            <button className="md:col-start-3 text-indigo-600 hover:text-indigo-800 font-medium">
+            {/* <button className="md:col-start-3 text-indigo-600 hover:text-indigo-800 font-medium">
               Change Email
-            </button>
+            </button> */}
           </div>
         </div>
       </div>
