@@ -1,7 +1,7 @@
 // MonthlyPerformance.jsx
 import { useState, useEffect } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
-import axios from 'axios';
+import axiosInstance from '../api/axios';
 
 function ChartCard({ title, children }) {
     return (
@@ -31,7 +31,7 @@ const MonthlyPerformance = () => {
         const tokenObject = JSON.parse(localStorage.getItem('token'));
         if (!tokenObject?.token) throw new Error('No authentication token found');
 
-        const response = await axios.get('http://localhost:8080/api/v1/analytics/monthly-performance', {
+        const response = await axiosInstance.get('/api/v1/analytics/monthly-performance', {
           headers: { Authorization: `Bearer ${tokenObject.token}` }
         });
 

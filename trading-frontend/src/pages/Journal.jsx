@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axiosInstance from '../api/axios';
 import { Link } from 'react-router-dom';
 import { FaUserCircle } from "react-icons/fa";
 
@@ -103,11 +103,11 @@ const Journal = () => {
         return;
       }
 
-      await axios.put(`http://localhost:8080/api/journal/edit/${editedTrade.id}`, editedTrade, {
+      await axiosInstance.put(`/api/journal/edit/${editedTrade.id}`, editedTrade, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
   
-      const response = await axios.get('http://localhost:8080/api/journal/all', {
+      const response = await axiosInstance.get('/api/journal/all', {
         headers: { 'Authorization': `Bearer ${token}` }
       });
   
@@ -135,12 +135,12 @@ const Journal = () => {
       };
   
   
-      await axios.post('http://localhost:8080/api/journal/add', tradeToSend, {
+      await axiosInstance.post('/api/journal/add', tradeToSend, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
   
       // After adding, fetch updated trades
-      const response = await axios.get('http://localhost:8080/api/journal/all', {
+      const response = await axiosInstance.get('/api/journal/all', {
         headers: { 'Authorization': `Bearer ${token}` },
       });
       setRecentTrades(response.data);
@@ -179,7 +179,7 @@ const Journal = () => {
           return;
         }
 
-        const response = await axios.get('http://localhost:8080/api/journal/all', {
+        const response = await axiosInstance.get('/api/journal/all', {
           headers: { 'Authorization': `Bearer ${token}` },
         });
         setRecentTrades(response.data);
@@ -205,12 +205,12 @@ const Journal = () => {
         return;
       }
   
-      await axios.delete(`http://localhost:8080/api/journal/delete/${tradeId}`, {
+      await axiosInstance.delete(`/api/journal/delete/${tradeId}`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
   
       // After deleting, fetch updated trades
-      const response = await axios.get('http://localhost:8080/api/journal/all', {
+      const response = await axiosInstance.get('/api/journal/all', {
         headers: { 'Authorization': `Bearer ${token}` },
       });
       setRecentTrades(response.data);

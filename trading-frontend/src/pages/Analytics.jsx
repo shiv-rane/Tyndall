@@ -1,7 +1,7 @@
 // AnalyticsPage.jsx
-import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import axiosInstance from '../api/axios';
 import StreakTracker from "../components/StreakTracker";
 import MonthlyPerformance from '../components/analytics/MonthlyPerformance';
 import WeeklyPerformance from '../components/analytics/WeeklyPerformance';
@@ -133,7 +133,7 @@ export default function AnalyticsPage() {
           return;
         }
 
-       const response = await axios.get('http://localhost:8080/api/v1/analytics/summary', {
+       const response = await axiosInstance.get('/api/v1/analytics/summary', {
                  headers: { 'Authorization': `Bearer ${token}` },
                });
                setKpiData(response.data);
@@ -154,7 +154,7 @@ export default function AnalyticsPage() {
         const tokenObject = JSON.parse(localStorage.getItem('token'));
         const token = tokenObject ? tokenObject.token : null;
 
-        const response = await axios.get('http://localhost:8080/api/v1/analytics/heatstreaks', {
+        const response = await axiosInstance.get('/api/v1/analytics/heatstreaks', {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -177,7 +177,7 @@ export default function AnalyticsPage() {
         const tokenObject = JSON.parse(localStorage.getItem('token'));
         const token = tokenObject ? tokenObject.token : null;
 
-        const response = await axios.get('http://localhost:8080/api/v1/analytics/strategy-table', {
+        const response = await axiosInstance.get('/api/v1/analytics/strategy-table', {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         setStrategyPerformance(response.data);
@@ -197,8 +197,8 @@ useEffect(() => {
       const tokenObject = JSON.parse(localStorage.getItem('token'));
       const token = tokenObject?.token;
 
-      const response = await axios.get(
-        'http://localhost:8080/api/v1/analytics/equity-curve', 
+      const response = await axiosInstance.get(
+        '/api/v1/analytics/equity-curve', 
         {
           headers: { 'Authorization': `Bearer ${token}` }
         }

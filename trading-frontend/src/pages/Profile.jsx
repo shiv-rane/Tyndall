@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from 'axios';
-
-
+import axiosInstance from '../api/axios';
 
 const Profile = () => {
   const [initialCapital, setInitialCapital] = useState('');
@@ -24,8 +23,8 @@ const handleSetCapital = async () => {
     const tokenObject = JSON.parse(localStorage.getItem('token'));
     const token = tokenObject ? tokenObject.token : null;
 
-    const response = await axios.put(
-      "http://localhost:8080/api/profile/set-initial-capital",
+    const response = await axiosInstance.put(
+      "/api/profile/set-initial-capital",
       { capital: initialCapital }, 
       {
         headers: {
@@ -53,8 +52,8 @@ const handleChangePassword = async () => {
     const tokenObject = JSON.parse(localStorage.getItem('token'));
     const token = tokenObject ? tokenObject.token : null;
 
-    await axios.put(
-      'http://localhost:8080/api/profile/change-password',
+    await axiosInstance.put(
+      '/api/profile/change-password',
       {
         current_pass: currentPassword,
         new_pass: newPassword,
@@ -85,7 +84,7 @@ const handleDeleteAccount = async () => {
     const tokenObject = JSON.parse(localStorage.getItem('token'));
     const token = tokenObject ? tokenObject.token : null;
 
-    const response = await axios.delete("http://localhost:8080/api/profile/delete-account", {
+    const response = await axiosInstance.delete("/api/profile/delete-account", {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -106,7 +105,7 @@ useEffect(() => {
       const tokenObject = JSON.parse(localStorage.getItem('token'));
       const token = tokenObject ? tokenObject.token : null;
 
-      const response = await axios.get("http://localhost:8080/api/profile/me", {
+      const response = await axiosInstance.get("/api/profile/me", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -135,8 +134,8 @@ const handleSaveName = async () => {
     const tokenObject = JSON.parse(localStorage.getItem('token'));
     const token = tokenObject ? tokenObject.token : null;
 
-    await axios.put(
-      "http://localhost:8080/api/profile/change-name",
+    await axiosInstance.put(
+      "/api/profile/change-name",
       { full_name: nameInput }, // assuming backend expects { full_name: "new name" }
       {
         headers: {
@@ -171,48 +170,48 @@ const handleSaveName = async () => {
         <div className="space-y-4">
           {/* Full Name */}
           <div className="grid grid-cols-1 md:grid-cols-3 items-center gap-4">
-  <label className="text-gray-700 font-medium">Full Name</label>
-  
-  <input
-    type="text"
-    value={isEditingName ? nameInput : fullName}      // show editable input or fullName
-    onChange={(e) => setNameInput(e.target.value)}    // update input state on typing
-    className="col-span-2 p-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 capitalize"
-    readOnly={!isEditingName}                          // readonly when not editing
-  />
+        <label className="text-gray-700 font-medium">Full Name</label>
+        
+        <input
+          type="text"
+          value={isEditingName ? nameInput : fullName}      // show editable input or fullName
+          onChange={(e) => setNameInput(e.target.value)}    // update input state on typing
+          className="col-span-2 p-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 capitalize"
+          readOnly={!isEditingName}                          // readonly when not editing
+        />
 
-  {!isEditingName ? (
-    <button
-      className="md:col-start-3 text-indigo-600 hover:text-indigo-800 font-medium"
-      onClick={() => setIsEditingName(true)}           // switch to edit mode on click
-    >
-      Change Name
-    </button>
-  ) : (
-    <div className="md:col-start-3 space-x-2">
-      <button
-        className="text-indigo-300 hover:text-indigo-600 font-medium"
-        onClick={handleSaveName}                       // save handler, defined next
-      >
-        Save
-      </button>
-      <button
-        className="text-red-600 hover:text-red-800 font-medium"
-        onClick={() => {
-          setIsEditingName(false);                      // cancel editing
-          setNameInput(fullName);                        // revert input to original name
-          setNameError("");                              // clear error
-        }}
-      >
-        Cancel
-      </button>
-    </div>
-  )}
+        {!isEditingName ? (
+          <button
+            className="md:col-start-3 text-indigo-600 hover:text-indigo-800 font-medium"
+            onClick={() => setIsEditingName(true)}           // switch to edit mode on click
+          >
+            Change Name
+          </button>
+        ) : (
+          <div className="md:col-start-3 space-x-2">
+            <button
+              className="text-indigo-300 hover:text-indigo-600 font-medium"
+              onClick={handleSaveName}                       // save handler, defined next
+            >
+              Save
+            </button>
+            <button
+              className="text-red-600 hover:text-red-800 font-medium"
+              onClick={() => {
+                setIsEditingName(false);                      // cancel editing
+                setNameInput(fullName);                        // revert input to original name
+                setNameError("");                              // clear error
+              }}
+            >
+              Cancel
+            </button>
+          </div>
+        )}
 
-  {nameError && (
-    <p className="text-red-600 col-span-full">{nameError}</p>   // show error if any
-  )}
-</div>
+        {nameError && (
+          <p className="text-red-600 col-span-full">{nameError}</p>   // show error if any
+        )}
+      </div>
 
 
           {/* Email */}

@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import { motion } from 'framer-motion'
+import axiosInstance from '../api/axios';
 
 const OTPVerificationPage = () => {
   const [otp, setOtp] = useState(['', '', '', '', '', ''])
@@ -74,7 +75,7 @@ const OTPVerificationPage = () => {
     setError('')
 
     try {
-      const response = await axios.post('http://localhost:8080/api/auth/verify-otp', {
+      const response = await axiosInstance.post('/api/auth/verify-otp', {
         email,
         otp: otpCode
       })
@@ -101,7 +102,7 @@ const OTPVerificationPage = () => {
     setError('')
 
     try {
-      await axios.post('/api/auth/resend-otp', { email })
+      await axiosInstance.post('/api/auth/resend-otp', { email })
       setOtp(['', '', '', '', '', ''])
       setCountdown(60)
       setCanResend(false)

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate,Link } from "react-router-dom";
 import { FaUserCircle } from "react-icons/fa";
-import axios from "axios";
+import axiosInstance from '../api/axios';
 import {
   LineChart,
   Line,
@@ -39,10 +39,10 @@ const Dashboard = () => {
         };
 
         const [statsRes, equityRes, tradesRes, tipRes] = await Promise.all([
-          axios.get("http://localhost:8080/api/dashboard/summary", axiosConfig),
-          axios.get("http://localhost:8080/api/v1/analytics/equity-curve", axiosConfig),
-          axios.get("http://localhost:8080/api/dashboard/recent-trades", axiosConfig),
-          axios.get("/api/user/suggestions", axiosConfig),
+          axiosInstance.get("/api/dashboard/summary", axiosConfig),
+          axiosInstance.get("/api/v1/analytics/equity-curve", axiosConfig),
+          axiosInstance.get("/api/dashboard/recent-trades", axiosConfig),
+          axiosInstance.get("/api/user/suggestions", axiosConfig),
         ]);
 
         // Process equity data immediately after receiving it
