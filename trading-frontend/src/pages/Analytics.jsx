@@ -42,7 +42,7 @@ const formatWeek = (startDateStr) => {
 // Sidebar component
 function Sidebar() {
   return (
-    <div className="w-64 bg-indigo-600 text-white flex flex-col p-6 h-screen sticky top-0 relative">
+    <aside className="w-64 bg-indigo-600 text-white flex flex-col p-6 h-screen sticky top-0 relative">
       <h1 className="text-2xl font-bold mb-10 tracking-wide">TradeSaaS</h1>
 
       <nav className="flex flex-col gap-2">
@@ -66,17 +66,17 @@ function Sidebar() {
         </Link>
       </nav>
 
+      {/* Added Profile Button (matches dashboard exactly) */}
       <div className="mt-auto mb-2">
-        <button
-          onClick={() => {
-            window.location.href = '/profile';
-          }}
+        <Link
+          to="/profile"
           className="w-full p-3 text-left rounded-lg hover:bg-indigo-500 hover:scale-[1.02] transition-all duration-200 font-medium tracking-wide flex items-center gap-2"
         >
           <FaUserCircle size={20} /> My Profile
-        </button>
+        </Link>
       </div>
 
+      {/* Existing Logout Button (unchanged) */}
       <div className="pb-2">
         <button
           onClick={() => {
@@ -88,10 +88,9 @@ function Sidebar() {
           Logout
         </button>
       </div>
-    </div>
+    </aside>
   );
 }
-
 // KPI card
 function KPICard({ title, value, valueClassName = '' }) {
   return (
