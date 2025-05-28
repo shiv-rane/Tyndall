@@ -63,9 +63,10 @@ const formatWeek = (startDateStr) => {
 //     </aside>
 //   );
 // }
+
 function Sidebar() {
   return (
-    <div className="w-64 bg-indigo-600 text-white fixed h-full p-6">
+    <div className="w-64 bg-indigo-600 text-white fixed h-full p-6 flex flex-col">
       <h1 className="text-2xl font-bold mb-10 tracking-wide">TradeSaaS</h1>
       
       <nav className="flex flex-col gap-2">
@@ -89,24 +90,23 @@ function Sidebar() {
         </Link>
       </nav>
 
-      {/* Profile button added exactly like dashboard but with fixed positioning */}
-      <div className="absolute bottom-16 left-0 right-0 px-6">
+      {/* Profile and Logout buttons container */}
+      <div className="mt-auto">
+        {/* Profile button - matches dashboard styling exactly */}
         <Link
           to="/profile"
-          className="block p-3 rounded-lg hover:bg-indigo-500 hover:scale-[1.02] transition-all duration-200 font-medium tracking-wide flex items-center gap-2"
+          className="block mb-2 p-3 rounded-lg hover:bg-indigo-500 hover:scale-[1.02] transition-all duration-200 font-medium tracking-wide flex items-center gap-2"
         >
           <FaUserCircle size={20} /> My Profile
         </Link>
-      </div>
 
-      {/* Original logout button - completely unchanged */}
-      <div className="absolute bottom-0 left-0 right-0 p-6 border-t border-indigo-400">
+        {/* Logout button - original styling without border line */}
         <button
           onClick={() => {
             localStorage.removeItem('token');
             window.location.href = '/login';
           }}
-          className="w-full p-3 text-left rounded-lg hover:bg-indigo-400 bg-indigo-500 transition-colors font-medium tracking-wide"
+          className="w-full p-3 rounded-lg hover:bg-indigo-400 bg-indigo-500 transition-colors font-medium tracking-wide text-left"
         >
           Logout
         </button>
