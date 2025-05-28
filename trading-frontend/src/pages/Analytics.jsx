@@ -1,14 +1,13 @@
 // AnalyticsPage.jsx
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { FaUserCircle } from 'react-icons/fa';
 import axiosInstance from '../api/axios';
 import StreakTracker from "../components/StreakTracker";
 import MonthlyPerformance from '../components/analytics/MonthlyPerformance';
 import WeeklyPerformance from '../components/analytics/WeeklyPerformance';
 import { Card, CardHeader, CardBody } from '../components/ui/Card';
 import { Badge } from '../components/ui/Badge';
-import { FaUserCircle } from 'react-icons/fa';
-import { Link } from 'react-router-dom';
 
 import {
   BarChart,
@@ -92,6 +91,7 @@ function Sidebar() {
     </div>
   );
 }
+
 // KPI card
 function KPICard({ title, value, valueClassName = '' }) {
   return (
