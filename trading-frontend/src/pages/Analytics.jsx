@@ -40,44 +40,67 @@ const formatWeek = (startDateStr) => {
 
 
 // Sidebar component
+// function Sidebar() {
+//   return (
+//     <aside className="w-64 bg-indigo-600 text-white fixed h-screen p-6">
+//       <h1 className="text-2xl font-bold mb-10 tracking-wide">TradeSaaS</h1>
+//       <nav className="flex flex-col gap-2">
+//         <Link to="/dashboard" className="p-3 rounded-lg hover:bg-indigo-500 hover:scale-[1.02] transition-all duration-200 font-medium tracking-wide">Dashboard</Link>
+//         <Link to="/journal" className="p-3 rounded-lg hover:bg-indigo-500 hover:scale-[1.02] transition-all duration-200 font-medium tracking-wide">Journal</Link>
+//         <Link to="/analytics" className="p-3 rounded-lg hover:bg-indigo-500 hover:scale-[1.02] transition-all duration-200 font-medium tracking-wide">Analytics</Link>
+//       </nav>
+//       <div className="absolute bottom-0 left-0 right-0 p-6 border-t border-indigo-400">
+//         <button
+//           onClick={() => {
+//             localStorage.removeItem('token');
+//             window.location.href = '/login';
+//           }}
+//           className="w-full p-3 text-left rounded-lg hover:bg-indigo-400 bg-indigo-500 transition-colors font-medium tracking-wide"
+//         >
+//           Logout
+//         </button>
+//       </div>
+//     </aside>
+//   );
+// }
 function Sidebar() {
   return (
-    <aside className="w-64 bg-indigo-600 text-white flex flex-col p-6 h-screen sticky top-0 relative">
+    <div className="w-64 bg-indigo-600 text-white fixed h-full p-6">
       <h1 className="text-2xl font-bold mb-10 tracking-wide">TradeSaaS</h1>
-
+      
       <nav className="flex flex-col gap-2">
-        <Link
-          to="/dashboard"
+        <Link 
+          to="/dashboard" 
           className="p-3 rounded-lg hover:bg-indigo-500 hover:scale-[1.02] transition-all duration-200 font-medium tracking-wide"
         >
           Dashboard
         </Link>
-        <Link
-          to="/journal"
+        <Link 
+          to="/journal" 
           className="p-3 rounded-lg hover:bg-indigo-500 hover:scale-[1.02] transition-all duration-200 font-medium tracking-wide"
         >
           Journal
         </Link>
-        <Link
-          to="/analytics"
+        <Link 
+          to="/analytics" 
           className="p-3 rounded-lg hover:bg-indigo-500 hover:scale-[1.02] transition-all duration-200 font-medium tracking-wide"
         >
           Analytics
         </Link>
       </nav>
 
-      {/* Added Profile Button (matches dashboard exactly) */}
-      <div className="mt-auto mb-2">
+      {/* Profile button added exactly like dashboard but with fixed positioning */}
+      <div className="absolute bottom-16 left-0 right-0 px-6">
         <Link
           to="/profile"
-          className="w-full p-3 text-left rounded-lg hover:bg-indigo-500 hover:scale-[1.02] transition-all duration-200 font-medium tracking-wide flex items-center gap-2"
+          className="block p-3 rounded-lg hover:bg-indigo-500 hover:scale-[1.02] transition-all duration-200 font-medium tracking-wide flex items-center gap-2"
         >
           <FaUserCircle size={20} /> My Profile
         </Link>
       </div>
 
-      {/* Existing Logout Button (unchanged) */}
-      <div className="pb-2">
+      {/* Original logout button - completely unchanged */}
+      <div className="absolute bottom-0 left-0 right-0 p-6 border-t border-indigo-400">
         <button
           onClick={() => {
             localStorage.removeItem('token');
@@ -88,9 +111,10 @@ function Sidebar() {
           Logout
         </button>
       </div>
-    </aside>
+    </div>
   );
 }
+
 // KPI card
 function KPICard({ title, value, valueClassName = '' }) {
   return (
