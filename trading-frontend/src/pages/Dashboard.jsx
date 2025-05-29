@@ -42,7 +42,7 @@ const Dashboard = () => {
           axiosInstance.get("/api/dashboard/summary", axiosConfig),
           axiosInstance.get("/api/v1/analytics/equity-curve", axiosConfig),
           axiosInstance.get("/api/dashboard/recent-trades", axiosConfig),
-          axiosInstance.get("/api/user/suggestions", axiosConfig),
+          // axiosInstance.get("/api/user/suggestions", axiosConfig),
         ]);
 
         // Process equity data immediately after receiving it
