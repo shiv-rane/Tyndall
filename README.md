@@ -30,16 +30,16 @@
 ## 📸 Product Screenshots
 
 ### Login View
-![Login Page](assets/login-page.jpg)
+![Login Page](assets/login-page.JPG)
 
 ### Dashboard View
-![Dashboard](assets/dashboard.jpg)
+![Dashboard](assets/dashboard.JPG)
 
 ### Journal Page
-![Journal](assets/journal-page.jpg)
+![Journal](assets/journal-page.JPG)
 
 ### Analytics Module
-![Analytics](assets/analytics-page.jpg)
+![Analytics](assets/analytics-page.JPG)
 
 
 ---
@@ -55,7 +55,7 @@ It's more than a product—it's a tool built out of real trading pain.
 
 Made by **Shiv Rane**  
 📧 shiwrane@example.com  
-🌐 [Product Landing Page](https://trading-saas-six.vercel.app/)
+🌐 [Product Page](https://trading-saas-six.vercel.app/)
 
 ---
 
