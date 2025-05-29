@@ -7,7 +7,7 @@
 
 ## 🧩 Key Features
 
-✅ JWT-secured authentication with OTP mechanism for user verification
+✅ JWT-secured authentication with OTP mechanism for user verification  
 ✅ Trade journal with filters, notes, and export-ready view  
 ✅ Equity curve, win/loss streaks, monthly & weekly charts  
 ✅ Strategy-wise performance metrics  
