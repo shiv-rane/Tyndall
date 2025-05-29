@@ -22,7 +22,7 @@
 | ------------ | ---------------------------------- |
 | Frontend     | React, JavaScript, TailwindCSS     |
 | Backend      | Spring Boot (Java), JWT Auth       |
-| Database     | MySQL (or your preferred DB)       |
+| Database     | MySQL                              |
 | Charts       | Recharts                           |
 
 ---
