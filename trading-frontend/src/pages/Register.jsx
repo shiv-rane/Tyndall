@@ -39,14 +39,14 @@ export default function Register() {
       <div className="hidden lg:block w-1/2 bg-indigo-600 text-white p-12">
         <div className="max-w-md mx-auto h-full flex flex-col justify-center">
           <h1 className="text-5xl font-bold mb-4">Markets, illuminated</h1>
-          <p className="text-2xl">TradeSaaS</p>
+          <p className="text-2xl">Tyndall</p>
         </div>
       </div>
 
       {/* Right Side - Registration Form */}
       <div className="w-full lg:w-1/2 p-8 flex items-center justify-center">
         <div className="w-full max-w-md">
-          <h2 className="text-3xl font-bold text-gray-900 mb-6">Create your TradeSaaS account</h2>
+          <h2 className="text-3xl font-bold text-gray-900 mb-6">Create your Tyndall account</h2>
           
           {error && (
             <div className="mb-4 p-3 bg-red-50 text-red-700 rounded-md">{error}</div>

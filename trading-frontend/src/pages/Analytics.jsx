@@ -67,7 +67,7 @@ const formatWeek = (startDateStr) => {
 function Sidebar() {
   return (
     <div className="w-64 bg-indigo-600 text-white fixed h-full p-6 flex flex-col">
-      <h1 className="text-2xl font-bold mb-10 tracking-wide">TradeSaaS</h1>
+      <h1 className="text-2xl font-bold mb-10 tracking-wide">Tyndall</h1>
       
       <nav className="flex flex-col gap-2">
         <Link 

@@ -75,7 +75,7 @@ const Dashboard = () => {
 
       {/* Sidebar */}
       <div className="w-64 bg-indigo-600 text-white flex flex-col p-6 h-screen sticky top-0 relative">
-          <h1 className="text-2xl font-bold mb-10 tracking-wide">TradeSaaS</h1>
+          <h1 className="text-2xl font-bold mb-10 tracking-wide">Tyndall</h1>
 
           <nav className="flex flex-col gap-2">
             <a
