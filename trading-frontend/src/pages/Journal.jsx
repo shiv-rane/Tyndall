@@ -25,7 +25,6 @@ const Journal = () => {
     id: null
   });
   const [selectedNote, setSelectedNote] = useState(null);
-
   const [newTrade, setNewTrade] = useState({
     date: '',
     symbol: '',
@@ -41,7 +40,43 @@ const Journal = () => {
     note:''
     
   });
+  const [dateRange, setDateRange] = useState({
+  fromDate: '',
+  toDate: ''
+  });
+  const [filteredTrades, setFilteredTrades] = useState([]);
+  const [isFiltered, setIsFiltered] = useState(false);
 
+  //filter handler
+  const handleApplyFilters = () => {
+  if (!dateRange.fromDate || !dateRange.toDate) {
+    setError('Please select both dates');
+    return;
+  }
+
+  if (new Date(dateRange.fromDate) > new Date(dateRange.toDate)) {
+    setError('From date cannot be after To date');
+    return;
+  }
+
+  const filtered = recentTrades.filter(trade => {
+    const tradeDate = new Date(trade.date);
+    const fromDate = new Date(dateRange.fromDate);
+    const toDate = new Date(dateRange.toDate);
+    return tradeDate >= fromDate && tradeDate <= toDate;
+  });
+
+  setFilteredTrades(filtered);
+  setIsFiltered(true);
+  setError(null);
+};
+
+const handleClearFilters = () => {
+  setDateRange({ fromDate: '', toDate: '' });
+  setFilteredTrades([]);
+  setIsFiltered(false);
+  setError(null);
+};
 
   const calculatePNL = (trade) => {
     if (!trade.entryPrice || !trade.exitPrice || !trade.quantity) return 0;
@@ -89,6 +124,8 @@ const Journal = () => {
     
     setEditedTrade(updatedTrade);
   };
+
+
   //edit trade
   const handleSaveEdit = async () => {
     try {
@@ -96,7 +133,7 @@ const Journal = () => {
       const token = tokenObject ? tokenObject.token : null;
   
       if (!token) return;
-  
+
       const tradeId = Number(editedTrade.id);
       if (isNaN(tradeId)) {
         console.error('Invalid ID format:', editedTrade.id);
@@ -113,6 +150,9 @@ const Journal = () => {
   
       setRecentTrades(response.data);
       setEditingRow(null);
+      if (isFiltered) {
+        handleApplyFilters(); // Re-apply the current filters
+      }
     } catch (error) {
       console.error("Error updating trade:", error);
     }
@@ -129,6 +169,7 @@ const Journal = () => {
         console.error('No authentication token found');
         return;
       }
+      
       const tradeToSend = {
         ...newTrade,
         pnl: calculatePNL(newTrade) // Add this line
@@ -144,7 +185,9 @@ const Journal = () => {
         headers: { 'Authorization': `Bearer ${token}` },
       });
       setRecentTrades(response.data);
-  
+      if (isFiltered) {
+        handleApplyFilters(); // Re-apply the current filters
+      }
       setShowAddRow(false);
       setNewTrade({
         date: '',
@@ -204,6 +247,12 @@ const Journal = () => {
         console.error('No authentication token found');
         return;
       }
+
+      if (isFiltered && filteredTrades.length === 1) {
+        handleClearFilters(); // If we deleted the last filtered trade
+      } else if (isFiltered) {
+        handleApplyFilters();
+      }
   
       await axiosInstance.delete(`/api/journal/delete/${tradeId}`, {
         headers: { 'Authorization': `Bearer ${token}` }
@@ -218,8 +267,7 @@ const Journal = () => {
       console.error('Error deleting trade:', error);
     }
   };
-  
-
+  const tradesToDisplay = isFiltered ? filteredTrades : recentTrades;
   return (
     <div className="flex min-h-screen bg-gray-100">
       {/* Sidebar */}
@@ -295,6 +343,7 @@ const Journal = () => {
             </button>
           </div>
         </div> */}
+        {/* Filter Section */}
         <div className="mb-6 flex flex-wrap gap-4 items-center bg-white p-4 rounded-lg shadow-sm">
           <div className="flex gap-4 flex-grow flex-wrap">
             <div className="flex items-center gap-2 flex-grow">
@@ -302,7 +351,10 @@ const Journal = () => {
               <input
                 id="from-date"
                 type="date"
+                value={dateRange.fromDate}
+                onChange={(e) => setDateRange({...dateRange, fromDate: e.target.value})}
                 className="p-2 border border-gray-300 rounded-md w-full"
+                max={dateRange.toDate || undefined}
               />
             </div>
             <div className="flex items-center gap-2 flex-grow">
@@ -310,12 +362,26 @@ const Journal = () => {
               <input
                 id="to-date"
                 type="date"
+                value={dateRange.toDate}
+                onChange={(e) => setDateRange({...dateRange, toDate: e.target.value})}
                 className="p-2 border border-gray-300 rounded-md w-full"
+                min={dateRange.fromDate || undefined}
               />
             </div>
-            <button className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-500 transition duration-200 whitespace-nowrap">
+            <button 
+              onClick={handleApplyFilters}
+              className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-500 transition duration-200 whitespace-nowrap"
+            >
               Apply Filters
             </button>
+            {isFiltered && (
+              <button 
+                onClick={handleClearFilters}
+                className="bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-500 transition duration-200 whitespace-nowrap"
+              >
+                Clear Filters
+              </button>
+            )}
           </div>
         </div>
 
@@ -356,148 +422,147 @@ const Journal = () => {
                 <tbody className="divide-y divide-gray-200">
                   {/* Add Trade Row */}
                   {showAddRow && (
-  <tr className="bg-blue-50">
-    {/* Date */}
-    <td className="px-6 py-4">
-      <input
-        type="date"
-        value={newTrade.date}
-        onChange={(e) => handleTradeChange('date', e.target.value)}
-        className="w-full p-1 border rounded"
-      />
-    </td>
-    
-    {/* Symbol */}
-    <td className="px-6 py-4">
-      <input
-        type="text"
-        value={newTrade.symbol}
-        onChange={(e) => handleTradeChange('symbol', e.target.value)}
-        className="w-full p-1 border rounded"
-        placeholder="Symbol"
-      />
-    </td>
-    
-    {/* Side (Trade Type) */}
-    <td className="px-6 py-4">
-      <select
-        value={newTrade.tradeType}
-        onChange={(e) => handleTradeChange('tradeType', e.target.value)}
-        className="w-full p-1 border rounded"
-      >
-        <option>Buy</option>
-        <option>Sell</option>
-      </select>
-    </td>
-    
-    {/* Option Type */}
-    <td className="px-6 py-4">
-      <select
-        value={newTrade.optionType}
-        onChange={(e) => handleTradeChange('optionType', e.target.value)}
-        className="w-full p-1 border rounded"
-      >
-        <option>CE</option>
-        <option>PE</option>
-      </select>
-    </td>
-    
-    {/* Entry Price */}
-    <td className="px-6 py-4">
-      <input
-        type="number"
-        value={newTrade.entryPrice}
-        onChange={(e) => handleTradeChange('entryPrice', e.target.value)}
-        className="w-full p-1 border rounded"
-        placeholder="Entry"
-      />
-    </td>
-    
-    {/* Entry Time */}
-    <td className="px-6 py-4">
-      <input
-        type="time"
-        value={newTrade.entryTime}
-        onChange={(e) => handleTradeChange('entryTime', e.target.value)}
-        className="w-full p-1 border rounded"
-      />
-    </td>
-    
-    {/* Exit Price */}
-    <td className="px-6 py-4">
-      <input
-        type="number"
-        value={newTrade.exitPrice}
-        onChange={(e) => handleTradeChange('exitPrice', e.target.value)}
-        className="w-full p-1 border rounded"
-        placeholder="Exit"
-      />
-    </td>
-    
-    {/* Exit Time */}
-    <td className="px-6 py-4">
-      <input
-        type="time"
-        value={newTrade.exitTime}
-        onChange={(e) => handleTradeChange('exitTime', e.target.value)}
-        className="w-full p-1 border rounded"
-      />
-    </td>
-    
-    {/* Quantity */}
-    <td className="px-6 py-4">
-      <input
-        type="number"
-        value={newTrade.quantity}
-        onChange={(e) => handleTradeChange('quantity', e.target.value)}
-        className="w-full p-1 border rounded"
-        placeholder="Qty"
-      />
-    </td>
-    
-    {/* Strategy */}
-    <td className="px-6 py-4">
-      <input
-        type="text"
-        value={newTrade.strategy}
-        onChange={(e) => handleTradeChange('strategy', e.target.value)}
-        className="w-full p-1 border rounded"
-        placeholder="Strategy"
-      />
-    </td>
-    
-    {/* P&L */}
-    <td className={`px-6 py-4 ${newTrade.pnl >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-      <input
-        type="number"
-        value={newTrade.pnl || ''}
-        readOnly
-        className="w-full p-1 border rounded bg-gray-100"
-        placeholder="P&L"
-      />
-    </td>
-    
-    {/* Actions */}
-    <td className="px-6 py-4 flex gap-2">
-      <button
-        onClick={handleSaveTrade}
-        className="bg-green-600 text-white px-3 py-1 rounded"
-      >
-        Save
-      </button>
-      <button 
-        onClick={() => setShowAddRow(false)}
-        className="bg-gray-600 text-white px-3 py-1 rounded"
-      >
-        Cancel
-      </button>
-    </td>
-  </tr>
-)}
+                  <tr className="bg-blue-50">
+                    {/* Date */}
+                    <td className="px-6 py-4">
+                      <input
+                        type="date"
+                        value={newTrade.date}
+                        onChange={(e) => handleTradeChange('date', e.target.value)}
+                        className="w-full p-1 border rounded"
+                      />
+                    </td>
+                  {/* Symbol */}
+                  <td className="px-6 py-4">
+                    <input
+                      type="text"
+                      value={newTrade.symbol}
+                      onChange={(e) => handleTradeChange('symbol', e.target.value)}
+                      className="w-full p-1 border rounded"
+                      placeholder="Symbol"
+                    />
+                  </td>
+                  
+                  {/* Side (Trade Type) */}
+                  <td className="px-6 py-4">
+                    <select
+                      value={newTrade.tradeType}
+                      onChange={(e) => handleTradeChange('tradeType', e.target.value)}
+                      className="w-full p-1 border rounded"
+                    >
+                      <option>Buy</option>
+                      <option>Sell</option>
+                    </select>
+                  </td>
+                  
+                  {/* Option Type */}
+                  <td className="px-6 py-4">
+                    <select
+                      value={newTrade.optionType}
+                      onChange={(e) => handleTradeChange('optionType', e.target.value)}
+                      className="w-full p-1 border rounded"
+                    >
+                      <option>CE</option>
+                      <option>PE</option>
+                    </select>
+                  </td>
+                  
+                  {/* Entry Price */}
+                  <td className="px-6 py-4">
+                    <input
+                      type="number"
+                      value={newTrade.entryPrice}
+                      onChange={(e) => handleTradeChange('entryPrice', e.target.value)}
+                      className="w-full p-1 border rounded"
+                      placeholder="Entry"
+                    />
+                  </td>
+                  
+                  {/* Entry Time */}
+                  <td className="px-6 py-4">
+                    <input
+                      type="time"
+                      value={newTrade.entryTime}
+                      onChange={(e) => handleTradeChange('entryTime', e.target.value)}
+                      className="w-full p-1 border rounded"
+                    />
+                  </td>
+                  
+                  {/* Exit Price */}
+                  <td className="px-6 py-4">
+                    <input
+                      type="number"
+                      value={newTrade.exitPrice}
+                      onChange={(e) => handleTradeChange('exitPrice', e.target.value)}
+                      className="w-full p-1 border rounded"
+                      placeholder="Exit"
+                    />
+                  </td>
+                  
+                  {/* Exit Time */}
+                  <td className="px-6 py-4">
+                    <input
+                      type="time"
+                      value={newTrade.exitTime}
+                      onChange={(e) => handleTradeChange('exitTime', e.target.value)}
+                      className="w-full p-1 border rounded"
+                    />
+                  </td>
+                  
+                  {/* Quantity */}
+                  <td className="px-6 py-4">
+                    <input
+                      type="number"
+                      value={newTrade.quantity}
+                      onChange={(e) => handleTradeChange('quantity', e.target.value)}
+                      className="w-full p-1 border rounded"
+                      placeholder="Qty"
+                    />
+                  </td>
+                  
+                  {/* Strategy */}
+                  <td className="px-6 py-4">
+                    <input
+                      type="text"
+                      value={newTrade.strategy}
+                      onChange={(e) => handleTradeChange('strategy', e.target.value)}
+                      className="w-full p-1 border rounded"
+                      placeholder="Strategy"
+                    />
+                  </td>
+                  
+                  {/* P&L */}
+                  <td className={`px-6 py-4 ${newTrade.pnl >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                    <input
+                      type="number"
+                      value={newTrade.pnl || ''}
+                      readOnly
+                      className="w-full p-1 border rounded bg-gray-100"
+                      placeholder="P&L"
+                    />
+                  </td>
+                  
+                  {/* Actions */}
+                  <td className="px-6 py-4 flex gap-2">
+                    <button
+                      onClick={handleSaveTrade}
+                      className="bg-green-600 text-white px-3 py-1 rounded"
+                    >
+                      Save
+                    </button>
+                    <button 
+                      onClick={() => setShowAddRow(false)}
+                      className="bg-gray-600 text-white px-3 py-1 rounded"
+                    >
+                      Cancel
+                    </button>
+                  </td>
+                </tr>
+              )}
                   {/* Existing Trades */}
-{Array.isArray(recentTrades) && recentTrades.length > 0 ? (
-  recentTrades.map((trade, index) => {
-    const isEditing = editingRow === index;
+      {Array.isArray(tradesToDisplay) && tradesToDisplay.length > 0 ? (
+        tradesToDisplay.map((trade, index) => {
+          const isEditing = editingRow === index;
     
     return (
       <tr key={index} className="hover:bg-gray-50 transition-colors">
@@ -723,13 +788,13 @@ const Journal = () => {
       </tr>
     );
   })
-) : (
-  <tr>
-    <td colSpan="12" className="px-6 py-8 text-center text-gray-500">
-      No trades recorded yet
-    </td>
-  </tr>
-)}
+  ) : (
+    <tr>
+      <td colSpan="12" className="px-6 py-8 text-center text-gray-500">
+        {isFiltered ? 'No trades found for selected date range' : 'No trades recorded yet'}
+      </td>
+    </tr>
+  )}
                 </tbody>
               </table>
             </div>
