@@ -47,15 +47,42 @@ public class SecurityConfig {
         return http.build();
     }
 
+    @Bean
     private CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
-        corsConfiguration.setAllowedOrigins(Arrays.asList("http://localhost:5173","https://trading-saas-six.vercel.app")); // Frontend URL
-        corsConfiguration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
-        corsConfiguration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "Accept"));
-        corsConfiguration.setAllowCredentials(true); // Allow cookies, authorization tokens, etc.
+        // Set allowed origins (note: fixed typo in method name)
+        corsConfiguration.setAllowedOrigins(Arrays.asList(
+                "http://localhost:5173",
+                "https://trading-saas-six.vercel.app"
+        ));
+
+        // Set allowed methods (fixed typo in "OPTIONS")
+        corsConfiguration.setAllowedMethods(Arrays.asList(
+                "GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"
+        ));
+
+        // Common headers needed for most apps
+        corsConfiguration.setAllowedHeaders(Arrays.asList(
+                "Authorization",
+                "Content-Type",
+                "Accept",
+                "X-Requested-With"
+        ));
+
+        // Important for performance: cache preflight response
+        corsConfiguration.setMaxAge(3600L); // 1 hour cache
+
+        // Allow credentials if needed (for cookies, auth tokens)
+        corsConfiguration.setAllowCredentials(true);
+
+        // Expose any custom headers your frontend needs to read
+        corsConfiguration.setExposedHeaders(Arrays.asList(
+                "Custom-Header",
+                "Content-Disposition"
+        ));
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", corsConfiguration); // Apply CORS configuration to all paths
+        source.registerCorsConfiguration("/**", corsConfiguration);
 
         return source;
     }

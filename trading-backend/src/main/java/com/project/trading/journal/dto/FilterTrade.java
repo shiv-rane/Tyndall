@@ -1,27 +1,26 @@
 package com.project.trading.journal.dto;
 
+import java.time.LocalDate;
+
 public class FilterTrade {
-    String symbol;
-    String date;
 
-    public FilterTrade(String symbol, String date) {
-        this.symbol = symbol;
-        this.date = date;
+    LocalDate startDate;
+    LocalDate endDate;
+
+
+    public void setStartDate(LocalDate startDate) {
+        this.startDate = startDate;
     }
 
-    public String getSymbol() {
-        return symbol;
+    public LocalDate getEndDate() {
+        return endDate;
     }
 
-    public void setSymbol(String symbol) {
-        this.symbol = symbol;
+    public void setEndDate(LocalDate endDate) {
+        this.endDate = endDate;
     }
 
-    public String getDate() {
-        return date;
-    }
-
-    public void setDate(String date) {
-        this.date = date;
+    public LocalDate getStartDate() {
+        return startDate;
     }
 }

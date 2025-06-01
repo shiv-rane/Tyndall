@@ -1,10 +1,13 @@
 package com.project.trading.journal.controller;
 
+import com.project.trading.journal.dto.FilterTrade;
 import com.project.trading.journal.model.Journal;
 import com.project.trading.journal.service.JournalService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.logging.Filter;
 
 @CrossOrigin
 @RestController
@@ -34,6 +37,11 @@ public class JournalController {
     public ResponseEntity<?> editJournal(@PathVariable Integer id, @RequestBody Journal updatedjournal){
         journalService.editJournal(id,updatedjournal);
         return ResponseEntity.ok("Trade updated successfully");
+    }
+
+    @GetMapping("/filter-trades")
+    public ResponseEntity<?> filterTrade(FilterTrade filterTrade){
+        return ResponseEntity.ok(journalService.filterTrade(filterTrade));
     }
 
 }

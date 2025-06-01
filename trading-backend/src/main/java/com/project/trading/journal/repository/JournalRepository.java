@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Repository
@@ -34,5 +35,7 @@ public interface JournalRepository extends JpaRepository<Journal,Integer> {
     List<Journal> findAllByUserEmailOrderByDateAsc(String email);
 
     List<Journal> findTop3ByUserEmailOrderByCreatedAtDesc(String email);
+
+    List<Journal> findByUserEmailAndDateBetweenOrderByDateAsc(String email, LocalDate startDate, LocalDate endDate);
 
 }

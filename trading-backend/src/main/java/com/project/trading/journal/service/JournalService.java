@@ -5,11 +5,11 @@ import com.project.trading.auth.repository.UserRepository;
 import com.project.trading.journal.dto.FilterTrade;
 import com.project.trading.journal.model.Journal;
 import com.project.trading.journal.repository.JournalRepository;
-import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Locale;
 
@@ -63,11 +63,10 @@ public class JournalService {
         journalRepository.delete(journal);
     }
 
-    public void filterTrade(FilterTrade filterTrade){
+    public List<Journal> filterTrade(FilterTrade filterTrade){
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
-
-        String symbol = filterTrade.getSymbol().toLowerCase();
-
+        List<Journal> journals = journalRepository.findByUserEmailAndDateBetweenOrderByDateAsc(email, filterTrade.getStartDate(),filterTrade.getEndDate());
+        return journals;
     }
 
 }
