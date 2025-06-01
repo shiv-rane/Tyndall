@@ -54,7 +54,7 @@ It's more than a product—it's a tool built out of real trading pain.
 ## 📬 Contact
 
 Made by **Shiv Rane**  
-📧 shiwrane@gmail.com  
+📧 shivwrane@gmail.com  
 🌐 [Product Page](https://trading-saas-six.vercel.app/)
 
 ---
