@@ -279,7 +279,7 @@ const Journal = () => {
         </div>
 
         {/* Filter Section */}
-        <div className="mb-6 flex flex-wrap gap-4 items-center bg-white p-4 rounded-lg shadow-sm">
+        {/* <div className="mb-6 flex flex-wrap gap-4 items-center bg-white p-4 rounded-lg shadow-sm">
           <input
             type="text"
             placeholder="Search by Symbol"
@@ -290,6 +290,29 @@ const Journal = () => {
               type="date"
               className="p-2 border border-gray-300 rounded-md w-full"
             />
+            <button className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-500 transition duration-200 whitespace-nowrap">
+              Apply Filters
+            </button>
+          </div>
+        </div> */}
+        <div className="mb-6 flex flex-wrap gap-4 items-center bg-white p-4 rounded-lg shadow-sm">
+          <div className="flex gap-4 flex-grow flex-wrap">
+            <div className="flex items-center gap-2 flex-grow">
+              <label htmlFor="from-date" className="whitespace-nowrap">From:</label>
+              <input
+                id="from-date"
+                type="date"
+                className="p-2 border border-gray-300 rounded-md w-full"
+              />
+            </div>
+            <div className="flex items-center gap-2 flex-grow">
+              <label htmlFor="to-date" className="whitespace-nowrap">To:</label>
+              <input
+                id="to-date"
+                type="date"
+                className="p-2 border border-gray-300 rounded-md w-full"
+              />
+            </div>
             <button className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-500 transition duration-200 whitespace-nowrap">
               Apply Filters
             </button>

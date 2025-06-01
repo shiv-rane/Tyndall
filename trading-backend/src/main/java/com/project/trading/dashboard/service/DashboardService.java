@@ -75,7 +75,7 @@ public class DashboardService {
                 Math.round(winRate),
                 avgRR,
                 totalTrades,
-                Math.round(maxDrawdown * 100.0) / 100.0 // rounding to 2 decimal places
+                Math.round(maxDrawdown * 100.0) / 100.0
         );
     }
 
@@ -87,11 +87,11 @@ public class DashboardService {
                 .map(journal -> new RecentTradeDTO(
                         journal.getDate(),
                         journal.getSymbol(),
-                        journal.getTradeType(),  // assuming `side` = tradeType (BUY/SELL)
+                        journal.getTradeType(),
                         journal.getEntryPrice(),
                         journal.getExitPrice(),
                         journal.getPnl(),
-                        journal.getNote()  // assuming `note` is where you store emotion
+                        journal.getNote()
                 ))
                 .toList();
     }

@@ -35,14 +35,14 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtFilter jwtFilter) throws Exception {
         http
-                .cors(cors -> cors.configurationSource(corsConfigurationSource())) // Enable CORS
-                .csrf(csrf -> csrf.disable()) // Disable CSRF for API
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/register", "/api/auth/login","/api/auth/verify-otp").permitAll()  // Public endpoints
+                        .requestMatchers("/api/auth/register", "/api/auth/login","/api/auth/verify-otp","/api/ping").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class); // Add JWT filter
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
@@ -50,37 +50,12 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
-        // Set allowed origins (note: fixed typo in method name)
-        corsConfiguration.setAllowedOrigins(Arrays.asList(
-                "http://localhost:5173",
-                "https://trading-saas-six.vercel.app"
-        ));
-
-        // Set allowed methods (fixed typo in "OPTIONS")
-        corsConfiguration.setAllowedMethods(Arrays.asList(
-                "GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"
-        ));
-
-        // Common headers needed for most apps
-        corsConfiguration.setAllowedHeaders(Arrays.asList(
-                "Authorization",
-                "Content-Type",
-                "Accept",
-                "X-Requested-With"
-        ));
-
-        // Important for performance: cache preflight response
-        corsConfiguration.setMaxAge(3600L); // 1 hour cache
-
-        // Allow credentials if needed (for cookies, auth tokens)
+        corsConfiguration.setAllowedOrigins(Arrays.asList("http://localhost:5173","https://trading-saas-six.vercel.app"));
+        corsConfiguration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
+        corsConfiguration.setAllowedHeaders(Arrays.asList("Authorization","Content-Type","Accept","X-Requested-With"));
+        corsConfiguration.setMaxAge(3600L);
         corsConfiguration.setAllowCredentials(true);
-
-        // Expose any custom headers your frontend needs to read
-        corsConfiguration.setExposedHeaders(Arrays.asList(
-                "Custom-Header",
-                "Content-Disposition"
-        ));
-
+        corsConfiguration.setExposedHeaders(Arrays.asList("Custom-Header","Content-Disposition"));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", corsConfiguration);
 
