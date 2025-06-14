@@ -7,6 +7,8 @@ public class AnalyticsEquityCurveDTO {
     private LocalDate date;
     private long capital;
 
+    public AnalyticsEquityCurveDTO(){    }
+
     public AnalyticsEquityCurveDTO(LocalDate date, Long capital) {
         this.date = date;
         this.capital = capital;
