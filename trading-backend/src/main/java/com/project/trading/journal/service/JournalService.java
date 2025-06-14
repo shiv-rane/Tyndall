@@ -20,13 +20,13 @@ public class JournalService {
     @Autowired
     private UserRepository userRepository;
 
-    @CacheEvict(
-            value = {
-                    "summary", "recent-trade", "analytics-summary", "strategy-table",
-                    "heatstreak", "weekly-performance", "monthly-performance", "equity-curve"
-            },
-            key = "#email"
-    )
+//    @CacheEvict(
+//            value = {
+//                    "summary", "recent-trade", "analytics-summary", "strategy-table",
+//                    "heatstreak", "weekly-performance", "monthly-performance", "equity-curve"
+//            },
+//            key = "#email"
+//    )
     public void addJournal(Journal journal,String email){
 
         User user = userRepository.findByEmail(email).orElseThrow();
@@ -40,13 +40,13 @@ public class JournalService {
         return journalRepository.findByUserOrderByCreatedAtDesc(user);
     }
 
-    @CacheEvict(
-            value = {
-                    "summary", "recent-trade", "analytics-summary", "strategy-table",
-                    "heatstreak", "weekly-performance", "monthly-performance", "equity-curve"
-            },
-            key = "#email"
-    )
+//    @CacheEvict(
+//            value = {
+//                    "summary", "recent-trade", "analytics-summary", "strategy-table",
+//                    "heatstreak", "weekly-performance", "monthly-performance", "equity-curve"
+//            },
+//            key = "#email"
+//    )
     public void editJournal(Integer id,Journal updatedJournal,String email){
         Journal existingJournal = journalRepository.findById(id).orElseThrow();
 
@@ -69,13 +69,13 @@ public class JournalService {
         journalRepository.save(existingJournal);
     }
 
-    @CacheEvict(
-            value = {
-                    "summary", "recent-trade", "analytics-summary", "strategy-table",
-                    "heatstreak", "weekly-performance", "monthly-performance", "equity-curve"
-            },
-            key = "#email"
-    )
+//    @CacheEvict(
+//            value = {
+//                    "summary", "recent-trade", "analytics-summary", "strategy-table",
+//                    "heatstreak", "weekly-performance", "monthly-performance", "equity-curve"
+//            },
+//            key = "#email"
+//    )
     public void deleteJournal(Integer Id,String email){
         Journal journal = journalRepository.findById(Id).orElseThrow();
 

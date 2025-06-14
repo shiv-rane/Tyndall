@@ -28,7 +28,7 @@ public class DashboardService {
     @Autowired
     private UserRepository userRepository;
 
-    @Cacheable(value = "summary", key = "#email")
+//    @Cacheable(value = "summary", key = "#email")
     public DashboardSummaryDTO sendDashSum(String email){
         List<Journal> trades = journalRepository.findAllByUserEmail(email);
         User user = userRepository.findByEmail(email).orElseThrow();
@@ -80,7 +80,7 @@ public class DashboardService {
         );
     }
 
-    @Cacheable(value = "recent-trade", key = "#email")
+//    @Cacheable(value = "recent-trade", key = "#email")
     public List<RecentTradeDTO> getRecentTrades(String email) {
         return journalRepository.findTop3ByUserEmailOrderByCreatedAtDesc(email)
                 .stream()

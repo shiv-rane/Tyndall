@@ -27,7 +27,7 @@ public class AnalyticsService {
     @Autowired
     private UserRepository userRepository;
 
-    @Cacheable(value = "analytics-summary", key = "#email")
+//    @Cacheable(value = "analytics-summary", key = "#email")
     public AnalyticsSummaryDTO getSummary(String email){
         List<Journal> trades = journalRepository.findAllByUserEmail(email);
         User user = userRepository.findByEmail(email).orElseThrow();
@@ -70,7 +70,7 @@ public class AnalyticsService {
         return new AnalyticsSummaryDTO(totalPnl, winRate, avgRR, totalTrades,maxDrawdown);
     }
 
-    @Cacheable(value = "strategy-table", key = "#email")
+//    @Cacheable(value = "strategy-table", key = "#email")
     public List<AnalyticsStrategyDTO> getStrategyTable(String email){
         return journalRepository.getStrategyAnalytics(email);
     }
@@ -104,7 +104,7 @@ public class AnalyticsService {
         return new AnalyticsStreaksDTO(longestWinStreak, longestLossStreak);
     }
 
-    @Cacheable(value = "heatstreak" , key = "#email")
+//    @Cacheable(value = "heatstreak" , key = "#email")
     public List<AnalyticsHeatChartStreak> getHeatStreak(String email){
 
         List<Journal> trades = journalRepository.findAllByUserEmail(email);
@@ -115,7 +115,7 @@ public class AnalyticsService {
         return  list;
     }
 
-    @Cacheable(value = "weekly-performance" , key = "#email")
+//    @Cacheable(value = "weekly-performance" , key = "#email")
     public List<WeeklyPerformanceDTO> getWeeklyPerformance(String email){
 
         List<Journal> trades = journalRepository.findAllByUserEmail(email);
@@ -131,7 +131,7 @@ public class AnalyticsService {
                 .collect(Collectors.toList());
     }
 
-    @Cacheable(value = "monthly-performance" , key = "#email")
+//    @Cacheable(value = "monthly-performance" , key = "#email")
     public List<MonthlyPerformanceDTO> getMonthlyPerformance(String email) {
 
         List<Journal> trades = journalRepository.findAllByUserEmail(email);
@@ -159,7 +159,7 @@ public class AnalyticsService {
         return result;
     }
 
-    @Cacheable(value = "equity-curve" , key = "#email")
+//    @Cacheable(value = "equity-curve" , key = "#email")
     public List<AnalyticsEquityCurveDTO> getEquityCurve(String email){
 
         List<Journal> trades = journalRepository.findAllByUserEmailOrderByDateAsc(email);
