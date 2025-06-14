@@ -226,7 +226,6 @@ const handleClearFilters = () => {
           headers: { 'Authorization': `Bearer ${token}` },
         });
         setRecentTrades(response.data);
-        console.log(response.data);
         setLoading(false);
       } catch (error) {
         setError('Error fetching trades. Please try again later.');

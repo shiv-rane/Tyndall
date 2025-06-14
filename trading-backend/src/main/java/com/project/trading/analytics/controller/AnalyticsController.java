@@ -38,21 +38,25 @@ public class AnalyticsController {
 
     @GetMapping("/heatstreaks")
     public ResponseEntity<List<AnalyticsHeatChartStreak>> getHeatStreak(){
-        return ResponseEntity.ok(analyticsService.getHeatStreak());
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        return ResponseEntity.ok(analyticsService.getHeatStreak(email));
     }
 
     @GetMapping("/weekly-performance")
     public ResponseEntity<List<WeeklyPerformanceDTO>> getWeeklyPerformance(){
-        return ResponseEntity.ok(analyticsService.getWeeklyPerformance());
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        return ResponseEntity.ok(analyticsService.getWeeklyPerformance(email));
     }
 
     @GetMapping("/monthly-performance")
     public ResponseEntity<List<MonthlyPerformanceDTO>> getMonthlyPerformance(){
-        return ResponseEntity.ok(analyticsService.getMonthlyPerformance());
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        return ResponseEntity.ok(analyticsService.getMonthlyPerformance(email));
     }
 
     @GetMapping("/equity-curve")
     public ResponseEntity<List<AnalyticsEquityCurveDTO>> getEquityCurve(){
-        return ResponseEntity.ok(analyticsService.getEquityCurve());
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        return ResponseEntity.ok(analyticsService.getEquityCurve(email));
     }
 }

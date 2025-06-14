@@ -8,6 +8,7 @@ import com.project.trading.journal.model.Journal;
 import com.project.trading.journal.repository.JournalRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -27,8 +28,8 @@ public class DashboardService {
     @Autowired
     private UserRepository userRepository;
 
-    public DashboardSummaryDTO sendDashSum(){
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+    @Cacheable(value = "summary", key = "#email")
+    public DashboardSummaryDTO sendDashSum(String email){
         List<Journal> trades = journalRepository.findAllByUserEmail(email);
         User user = userRepository.findByEmail(email).orElseThrow();
         long capital = user.getInitial_capital();
@@ -79,9 +80,8 @@ public class DashboardService {
         );
     }
 
-
-    public List<RecentTradeDTO> getRecentTrades() {
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+    @Cacheable(value = "recent-trade", key = "#email")
+    public List<RecentTradeDTO> getRecentTrades(String email) {
         return journalRepository.findTop3ByUserEmailOrderByCreatedAtDesc(email)
                 .stream()
                 .map(journal -> new RecentTradeDTO(

@@ -7,6 +7,8 @@ import com.project.trading.journal.model.Journal;
 import com.project.trading.journal.repository.JournalRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +27,7 @@ public class AnalyticsService {
     @Autowired
     private UserRepository userRepository;
 
+    @Cacheable(value = "analytics-summary", key = "#email")
     public AnalyticsSummaryDTO getSummary(String email){
         List<Journal> trades = journalRepository.findAllByUserEmail(email);
         User user = userRepository.findByEmail(email).orElseThrow();
@@ -67,6 +70,7 @@ public class AnalyticsService {
         return new AnalyticsSummaryDTO(totalPnl, winRate, avgRR, totalTrades,maxDrawdown);
     }
 
+    @Cacheable(value = "strategy-table", key = "#email")
     public List<AnalyticsStrategyDTO> getStrategyTable(String email){
         return journalRepository.getStrategyAnalytics(email);
     }
@@ -100,21 +104,20 @@ public class AnalyticsService {
         return new AnalyticsStreaksDTO(longestWinStreak, longestLossStreak);
     }
 
-    public List<AnalyticsHeatChartStreak> getHeatStreak(){
+    @Cacheable(value = "heatstreak" , key = "#email")
+    public List<AnalyticsHeatChartStreak> getHeatStreak(String email){
 
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
         List<Journal> trades = journalRepository.findAllByUserEmail(email);
 
         List<AnalyticsHeatChartStreak> list = trades.stream()
                 .map(j -> new AnalyticsHeatChartStreak(j.getDate(), j.getPnl()))
                 .collect(Collectors.toList());
-
-
         return  list;
     }
 
-    public List<WeeklyPerformanceDTO> getWeeklyPerformance(){
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+    @Cacheable(value = "weekly-performance" , key = "#email")
+    public List<WeeklyPerformanceDTO> getWeeklyPerformance(String email){
+
         List<Journal> trades = journalRepository.findAllByUserEmail(email);
 
         Map<LocalDate, Double> weeklyPnL = trades.stream()
@@ -128,9 +131,9 @@ public class AnalyticsService {
                 .collect(Collectors.toList());
     }
 
+    @Cacheable(value = "monthly-performance" , key = "#email")
+    public List<MonthlyPerformanceDTO> getMonthlyPerformance(String email) {
 
-    public List<MonthlyPerformanceDTO> getMonthlyPerformance() {
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
         List<Journal> trades = journalRepository.findAllByUserEmail(email);
 
         // Use a Map to group by "YYYY-MM"
@@ -146,21 +149,19 @@ public class AnalyticsService {
             );
         }
 
-        // Convert map entries to DTO list
         List<MonthlyPerformanceDTO> result = new ArrayList<>();
         for (Map.Entry<String, Double> entry : monthlyPnLMap.entrySet()) {
             result.add(new MonthlyPerformanceDTO(entry.getKey(), Math.round(entry.getValue())));
         }
 
-        // Optional: sort by date
         result.sort(Comparator.comparing(MonthlyPerformanceDTO::getMonth));
 
         return result;
     }
 
+    @Cacheable(value = "equity-curve" , key = "#email")
+    public List<AnalyticsEquityCurveDTO> getEquityCurve(String email){
 
-    public List<AnalyticsEquityCurveDTO> getEquityCurve(){
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
         List<Journal> trades = journalRepository.findAllByUserEmailOrderByDateAsc(email);
         User user = userRepository.findByEmail(email).orElseThrow();
         long capital = user.getInitial_capital();
